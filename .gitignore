@@ -1,10 +1,9 @@
 # ============================================================
 # EXONIK — .gitignore
-# Protege la IP del proyecto y excluye archivos grandes
 # ============================================================
 
 # ─────────────────────────────────────────────
-# 🔒 IP CORE — NO subir (algoritmos propietarios)
+# 🔒 IP CORE — (algoritmos personales)
 # ─────────────────────────────────────────────
 fase_02_blast_offtargets.py
 fase_03_personalizacion.py
@@ -14,7 +13,7 @@ modulo_02_crispr.py
 modulo_03_mrna.py
 pipeline.py
 
-# Documentos técnicos internos (uso privado)
+# Documentos técnicos internos 
 CONTEXTO_TECNICO_EXONIK.md
 ROADMAP_NUEVA_ENFERMEDAD.md
 
@@ -40,7 +39,7 @@ datos_pacientes_reales/
 datos_pacientes/
 
 # ─────────────────────────────────────────────
-# 📊 RESULTADOS INTERMEDIOS — No públicos
+# 📊 RESULTADOS INTERMEDIOS 
 # ─────────────────────────────────────────────
 resultados_blast/
 resultados_personalizados/
@@ -51,14 +50,13 @@ reportes/
 # ─────────────────────────────────────────────
 # 🌐 REPORTES CLÍNICOS INDIVIDUALES
 # Solo se muestra 1 ejemplo anonimizado (HG01889_ACB)
-# Los demás se excluyen
 # ─────────────────────────────────────────────
 reporte_integrado/reporte_clinico_HG00640.html
 reporte_integrado/reporte_clinico_HG01140.html
 reporte_integrado/reporte_clinico_HG02594.html
 reporte_integrado/reporte_clinico_HG02923.html
 
-# Secuencias completas de guías y ARNm — IP sensible
+# Secuencias completas de guías y ARNm 
 reporte_integrado/secuencias_laboratorio.txt
 
 # ─────────────────────────────────────────────
@@ -96,18 +94,4 @@ estructuras_3d/*.pdb
 # ─────────────────────────────────────────────
 .ipynb_checkpoints/
 fase_06_alphafold_3d.ipynb
-
-# ─────────────────────────────────────────────
-# ✅ ARCHIVOS PÚBLICOS (se suben a GitHub)
-# ─────────────────────────────────────────────
-# config.py                          <- Secuencias y constantes (datos públicos)
-# fase_01_genomas_reales.py          <- Descarga datos públicos de 1000 Genomes
-# fase_05_reporte_integrado.py       <- Dashboard interactivo
-# requirements.txt                   <- Dependencias
-# README.md                          <- Documentación pública
-# reporte_integrado/dashboard_exonik.html
-# reporte_integrado/resumen_ejecutivo.html
-# reporte_integrado/reporte_clinico_HG01889.html  <- 1 ejemplo anonimizado
-# screenshots/                            <- Capturas del dashboard y diagramas
-# estructuras_3d/*.html                   <- Visualizaciones 3D interactivas (rotables)
 
