@@ -1,0 +1,33 @@
+# ============================================================
+# Exonik - Plataforma de Diseño de Terapia Génica Personalizada
+# Dependencias del Prototipo v0.1.0
+# ============================================================
+#
+# Este prototipo usa SOLO la biblioteca estándar de Python.
+# No requiere instalación de paquetes externos.
+#
+# Python >= 3.8
+#
+# Módulos estándar utilizados:
+#   - json       (carga de datos de pacientes)
+#   - os, sys    (manejo de archivos y rutas)
+#   - random     (simulación determinística de off-targets)
+#   - math       (cálculos de CAI y métricas)
+#   - hashlib    (semillas determinísticas)
+#   - datetime   (timestamps de reportes)
+#   - collections (estructuras de datos auxiliares)
+#
+# ============================================================
+# FUTURAS DEPENDENCIAS (para versión de producción):
+# ============================================================
+# biopython>=1.83       # Manejo de secuencias, BLAST, GenBank
+# pandas>=2.0           # Análisis de datos tabulares
+# numpy>=1.24           # Cálculos numéricos
+# scikit-learn>=1.3     # Modelos de scoring CRISPR (ML)
+# requests>=2.31        # APIs de NCBI, ClinVar, COSMIC
+# streamlit>=1.30       # Interfaz web para clientes
+plotly>=5.18            # Visualización de resultados (Fase 5 - Dashboard)
+py3Dmol>=2.0            # Visualización 3D de proteínas (Fase 6 - AlphaFold)
+biopython>=1.83         # Parsing de archivos PDB (Fase 6)
+# pysam>=0.22           # Lectura de archivos BAM/VCF
+

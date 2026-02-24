@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte HG01889 - Exonik</title>
+    
+    
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f0f2f5;
+    color: #202124;
+    line-height: 1.6;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+  .header {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: white;
+    padding: 40px 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(26,115,232,0.3);
+  }
+
+  .header h1 {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .header .subtitle {
+    font-size: 1.1em;
+    opacity: 0.9;
+    font-weight: 300;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    border: 1px solid #e8eaed;
+  }
+
+  .card h2 {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #1a73e8;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8eaed;
+  }
+
+  .card h3 {
+    font-size: 1.05em;
+    font-weight: 600;
+    color: #5f6368;
+    margin: 12px 0 8px 0;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .metric-box {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid #e8eaed;
+  }
+
+  .metric-box .value {
+    font-size: 2em;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .metric-box .label {
+    font-size: 0.85em;
+    color: #5f6368;
+    margin-top: 4px;
+  }
+
+  .score-excellent { color: #34a853; }
+  .score-good { color: #1a73e8; }
+  .score-medium { color: #fbbc04; }
+  .score-bad { color: #ea4335; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.9em;
+  }
+
+  table th {
+    background: #1a73e8;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e8eaed;
+  }
+
+  table tr:nth-child(even) { background: #f8f9fa; }
+  table tr:hover { background: #e8f0fe; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+  }
+
+  .badge-high { background: #fce8e6; color: #c5221f; }
+  .badge-medium { background: #fef7e0; color: #e37400; }
+  .badge-low { background: #e6f4ea; color: #137333; }
+  .badge-safe { background: #e8f0fe; color: #1967d2; }
+  .badge-info { background: #e8eaed; color: #5f6368; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .seq-box {
+    font-family: 'Courier New', monospace;
+    background: #263238;
+    color: #80cbc4;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 0.85em;
+    overflow-x: auto;
+    word-break: break-all;
+    line-height: 1.8;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 20px;
+    color: #9aa0a6;
+    font-size: 0.85em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+
+  .nav-links a {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #e8f0fe;
+    color: #1967d2;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9em;
+    transition: background 0.2s;
+  }
+
+  .nav-links a:hover { background: #d2e3fc; }
+
+  .progress-bar {
+    height: 8px;
+    background: #e8eaed;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 4px 0;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .disclaimer {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+    font-size: 0.85em;
+    color: #856404;
+  }
+</style>
+
+</head>
+<body>
+<div class="container">
+<div class="nav-links"><a href="dashboard_exonik.html">&larr; Volver al Dashboard</a></div>
+
+    <div class="header">
+        <h1>Reporte Clinico - HG01889</h1>
+        <div class="subtitle">Afrocaribenos (Barbados) | Portador rasgo falciforme (HbAS) | EXO-REAL-003</div>
+    </div>
+
+    <div class="card">
+        <h2>Informacion del Paciente</h2>
+        <div class="two-col">
+            <div>
+                <table>
+                    <tr><td>Muestra</td><td><strong>HG01889</strong></td></tr>
+                    <tr><td>ID Exonik</td><td>EXO-REAL-003</td></tr>
+                    <tr><td>Sexo</td><td>F</td></tr>
+                    <tr><td>Poblacion</td><td>Afrocaribenos (Barbados) (ACB)</td></tr>
+                    <tr><td>Diagnostico</td><td>Portador rasgo falciforme (HbAS)</td></tr>
+                    <tr><td>Genotipo rs334</td><td><strong>0|1</strong></td></tr>
+                    <tr><td>Fuente</td><td>1000 Genomes Project Phase 3</td></tr>
+                </table>
+            </div>
+            <div>
+                <h3>Variantes en Region HBB</h3>
+                <table>
+                    <tr><th>Posicion</th><th>Ref</th><th>Alt</th><th>Cigosidad</th></tr>
+                    <tr>
+                        <td>5,222,914</td>
+                        <td>A</td>
+                        <td>G</td>
+                        <td>heterocigoto</td>
+                    </tr>
+                    <tr>
+                        <td>5,223,069</td>
+                        <td>T</td>
+                        <td>A</td>
+                        <td>homocigoto</td>
+                    </tr>
+                    <tr>
+                        <td>5,223,699</td>
+                        <td>A</td>
+                        <td>C</td>
+                        <td>heterocigoto</td>
+                    </tr>
+                    <tr>
+                        <td>5,224,176</td>
+                        <td>G</td>
+                        <td>C</td>
+                        <td>homocigoto</td>
+                    </tr>
+                    <tr>
+                        <td>5,224,277</td>
+                        <td>G</td>
+                        <td>A</td>
+                        <td>homocigoto</td>
+                    </tr>
+                    <tr>
+                        <td>5,224,770</td>
+                        <td>C</td>
+                        <td>T</td>
+                        <td>heterocigoto</td>
+                    </tr>
+                    <tr>
+                        <td>5,224,812</td>
+                        <td>G</td>
+                        <td>C</td>
+                        <td>homocigoto</td>
+                    </tr>
+                    <tr>
+                        <td>5,224,973</td>
+                        <td>A</td>
+                        <td>C</td>
+                        <td>heterocigoto</td>
+                    </tr><tr><td colspan="4" style="color:#9aa0a6">... y 16 variantes mas</td></tr></table></div></div></div>
+    <div class="card">
+        <h2>Perfil CRISPR Personalizado</h2>
+        <p style="color:#5f6368;margin-bottom:12px">
+            Analisis de off-targets cruzado con las variantes geneticas reales del paciente.
+        </p>
+        <table>
+            <tr>
+                <th>Guia</th><th>Estrategia</th><th>Off-targets</th>
+                <th>Score Ref.</th><th>Score Personal.</th><th>Efecto</th>
+            </tr>
+            <tr>
+                <td><strong>HBB-g20</strong></td>
+                <td>Correccion Directa Hbb</td>
+                <td>2</td>
+                <td class="score-excellent">90/100</td>
+                <td><strong class="score-medium">70/100</strong></td>
+                <td><span class="badge badge-info">2 sin cambio</span></td>
+            </tr>
+            <tr>
+                <td><strong>HBB-g21</strong></td>
+                <td>Correccion Directa Hbb</td>
+                <td>2</td>
+                <td class="score-excellent">90/100</td>
+                <td><strong class="score-medium">68/100</strong></td>
+                <td><span class="badge badge-high">1 agravados</span></td>
+            </tr>
+            <tr>
+                <td><strong>HBB-g65</strong></td>
+                <td>Correccion Directa Hbb</td>
+                <td>2</td>
+                <td class="score-excellent">90/100</td>
+                <td><strong class="score-good">82/100</strong></td>
+                <td><span class="badge badge-info">2 sin cambio</span></td>
+            </tr>
+            <tr>
+                <td><strong>HBB-g66</strong></td>
+                <td>Correccion Directa Hbb</td>
+                <td>0</td>
+                <td class="score-excellent">100/100</td>
+                <td><strong class="score-excellent">100/100</strong></td>
+                <td><span class="badge badge-safe">Limpia</span></td>
+            </tr>
+            <tr>
+                <td><strong>HBB-g67</strong></td>
+                <td>Correccion Directa Hbb</td>
+                <td>0</td>
+                <td class="score-excellent">100/100</td>
+                <td><strong class="score-excellent">100/100</strong></td>
+                <td><span class="badge badge-safe">Limpia</span></td>
+            </tr>
+            <tr>
+                <td><strong>HBB-g68</strong></td>
+                <td>Correccion Directa Hbb</td>
+                <td>0</td>
+                <td class="score-excellent">100/100</td>
+                <td><strong class="score-excellent">100/100</strong></td>
+                <td><span class="badge badge-safe">Limpia</span></td>
+            </tr>
+            <tr>
+                <td><strong>BCL-g01</strong></td>
+                <td>Disrupcion Bcl11A</td>
+                <td>1</td>
+                <td class="score-excellent">95/100</td>
+                <td><strong class="score-good">85/100</strong></td>
+                <td><span class="badge badge-info">1 sin cambio</span></td>
+            </tr>
+            <tr>
+                <td><strong>BCL-g02</strong></td>
+                <td>Disrupcion Bcl11A</td>
+                <td>1</td>
+                <td class="score-excellent">95/100</td>
+                <td><strong class="score-good">85/100</strong></td>
+                <td><span class="badge badge-info">1 sin cambio</span></td>
+            </tr>
+            <tr>
+                <td><strong>BCL-g03</strong></td>
+                <td>Disrupcion Bcl11A</td>
+                <td>1</td>
+                <td class="score-excellent">95/100</td>
+                <td><strong class="score-good">85/100</strong></td>
+                <td><span class="badge badge-info">1 sin cambio</span></td>
+            </tr>
+            <tr>
+                <td><strong>BCL-g04</strong></td>
+                <td>Disrupcion Bcl11A</td>
+                <td>1</td>
+                <td class="score-excellent">95/100</td>
+                <td><strong class="score-good">85/100</strong></td>
+                <td><span class="badge badge-info">1 sin cambio</span></td>
+            </tr>
+            <tr>
+                <td><strong>BCL-g05</strong></td>
+                <td>Disrupcion Bcl11A</td>
+                <td>1</td>
+                <td class="score-excellent">95/100</td>
+                <td><strong class="score-good">85/100</strong></td>
+                <td><span class="badge badge-info">1 sin cambio</span></td>
+            </tr>
+            <tr>
+                <td><strong>BCL-g06</strong></td>
+                <td>Disrupcion Bcl11A</td>
+                <td>1</td>
+                <td class="score-excellent">95/100</td>
+                <td><strong class="score-good">85/100</strong></td>
+                <td><span class="badge badge-info">1 sin cambio</span></td>
+            </tr></table></div>
+    <div class="card" style="border-left: 4px solid #34a853">
+        <h2>Recomendacion Terapeutica para HG01889</h2>
+        <div class="two-col">
+            <div>
+                <h3>Terapia CRISPR</h3>
+                <table>
+                    <tr><td>Guia HBB recomendada</td><td><strong style="font-size:1.2em">HBB-g66</strong></td></tr>
+                    <tr><td>Score personalizado</td><td><strong class="score-excellent" style="font-size:1.2em">100/100</strong></td></tr>
+                    <tr><td>Guia BCL11A recomendada</td><td><strong>BCL-g01</strong></td></tr>
+                    <tr><td>Score BCL11A</td><td><strong class="score-good">85/100</strong></td></tr>
+                    <tr><td>Nucleasa</td><td>SpCas9 (NGG)</td></tr>
+                </table>
+            </div>
+            <div>
+                <h3>Terapia ARNm Complementaria</h3>
+                <table>
+                    <tr><td>Score ARNm</td><td><strong class="score-excellent" style="font-size:1.2em">96/100</strong></td></tr>
+                    <tr><td>Proteina</td><td>HBB normal (147 aa)</td></tr>
+                    <tr><td>Longitud ARNm</td><td>595 nt</td></tr>
+                    <tr><td>Modificacion</td><td>m1Psi (N1-metilpseudouridina)</td></tr>
+                    <tr><td>Vehiculo</td><td>LNP + anti-CD71</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <h3 style="margin-top:20px">Estrategia Combinada</h3>
+        <div style="background:#e6f4ea;padding:16px;border-radius:8px;margin-top:8px">
+            <strong>1. CRISPR (HBB-g66):</strong> Corregir la mutacion SCA (c.20A>T) directamente en celulas madre
+            hematopoyeticas. Score de seguridad personalizado: <strong>100/100</strong>.<br><br>
+            <strong>2. ARNm HBB:</strong> Mientras las celulas editadas se expanden, administrar ARNm encapsulado
+            en LNP dirigido a precursores eritroides para produccion transitoria de hemoglobina normal.
+            Score: <strong>96/100</strong>.<br><br>
+            <strong>3. BCL11A (BCL-g01):</strong> Opcion alternativa/complementaria: disrumpir el enhancer
+            de BCL11A para reactivar hemoglobina fetal (HbF), similar a Casgevy.
+        </div>
+    </div>
+    
+    <div class="disclaimer">
+        <strong>AVISO:</strong> Este reporte es generado computacionalmente con fines educativos y de investigacion.
+        No constituye diagnostico ni recomendacion medica. Requiere validacion experimental y aprobacion regulatoria
+        antes de cualquier aplicacion clinica. Exonik v0.1.0 (Research Use Only).
+    </div>
+    
+<div class="footer">
+    Exonik v0.1.0 - Plataforma de Diseno de Terapia Genica Personalizada<br>
+    Generado: 2026-02-18 14:42<br>
+    <strong>SOLO PARA INVESTIGACION - NO PARA USO CLINICO</strong>
+</div>
+</div>
+</body>
+</html>

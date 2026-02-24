@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen Ejecutivo - Exonik - Exonik</title>
+    
+    
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f0f2f5;
+    color: #202124;
+    line-height: 1.6;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+  .header {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: white;
+    padding: 40px 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(26,115,232,0.3);
+  }
+
+  .header h1 {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .header .subtitle {
+    font-size: 1.1em;
+    opacity: 0.9;
+    font-weight: 300;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    border: 1px solid #e8eaed;
+  }
+
+  .card h2 {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #1a73e8;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8eaed;
+  }
+
+  .card h3 {
+    font-size: 1.05em;
+    font-weight: 600;
+    color: #5f6368;
+    margin: 12px 0 8px 0;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .metric-box {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid #e8eaed;
+  }
+
+  .metric-box .value {
+    font-size: 2em;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .metric-box .label {
+    font-size: 0.85em;
+    color: #5f6368;
+    margin-top: 4px;
+  }
+
+  .score-excellent { color: #34a853; }
+  .score-good { color: #1a73e8; }
+  .score-medium { color: #fbbc04; }
+  .score-bad { color: #ea4335; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.9em;
+  }
+
+  table th {
+    background: #1a73e8;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e8eaed;
+  }
+
+  table tr:nth-child(even) { background: #f8f9fa; }
+  table tr:hover { background: #e8f0fe; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+  }
+
+  .badge-high { background: #fce8e6; color: #c5221f; }
+  .badge-medium { background: #fef7e0; color: #e37400; }
+  .badge-low { background: #e6f4ea; color: #137333; }
+  .badge-safe { background: #e8f0fe; color: #1967d2; }
+  .badge-info { background: #e8eaed; color: #5f6368; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .seq-box {
+    font-family: 'Courier New', monospace;
+    background: #263238;
+    color: #80cbc4;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 0.85em;
+    overflow-x: auto;
+    word-break: break-all;
+    line-height: 1.8;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 20px;
+    color: #9aa0a6;
+    font-size: 0.85em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+
+  .nav-links a {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #e8f0fe;
+    color: #1967d2;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9em;
+    transition: background 0.2s;
+  }
+
+  .nav-links a:hover { background: #d2e3fc; }
+
+  .progress-bar {
+    height: 8px;
+    background: #e8eaed;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 4px 0;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .disclaimer {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+    font-size: 0.85em;
+    color: #856404;
+  }
+</style>
+
+</head>
+<body>
+<div class="container">
+<div class="nav-links"><a href="dashboard_exonik.html">&larr; Dashboard</a></div>
+
+    <div class="header" style="background:linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1a73e8 100%)">
+        <h1>Exonik - Resumen Ejecutivo</h1>
+        <div class="subtitle">Terapia Genica Personalizada para Anemia Falciforme</div>
+    </div>
+
+    <div class="card">
+        <h2>Vision General del Proyecto</h2>
+        <p>Exonik es una plataforma computacional que disena terapia genica <strong>personalizada</strong>
+        para enfermedades monogenicas, comenzando con Anemia Falciforme (SCA). A diferencia de los
+        tratamientos actuales que usan un enfoque de "talla unica", Exonik analiza el genoma real
+        de cada paciente para identificar la guia CRISPR mas segura <em>para esa persona especifica</em>.</p>
+    </div>
+
+    <div class="card">
+        <h2>Pipeline Completado</h2>
+        <table>
+            <tr><th>Fase</th><th>Descripcion</th><th>Resultado Clave</th><th>Estado</th></tr>
+            <tr>
+                <td><strong>Fase 1</strong></td>
+                <td>Datos genomicos reales (1000 Genomes)</td>
+                <td>5 pacientes de 5 poblaciones diversas</td>
+                <td><span class="badge badge-low">Completada</span></td>
+            </tr>
+            <tr>
+                <td><strong>Fase 2</strong></td>
+                <td>Off-targets con BLAST+ vs genoma completo</td>
+                <td>12 guias analizadas, 12 off-targets encontrados</td>
+                <td><span class="badge badge-low">Completada</span></td>
+            </tr>
+            <tr>
+                <td><strong>Fase 3</strong></td>
+                <td>Personalizacion con variantes reales</td>
+                <td>12/12 off-targets personalizados en 3 cromosomas</td>
+                <td><span class="badge badge-low">Completada</span></td>
+            </tr>
+            <tr>
+                <td><strong>Fase 4</strong></td>
+                <td>ARNm terapeutico con validacion</td>
+                <td>Score global: 96/100</td>
+                <td><span class="badge badge-low">Completada</span></td>
+            </tr>
+            <tr>
+                <td><strong>Fase 5</strong></td>
+                <td>Dashboard + reportes clinicos</td>
+                <td>Este documento</td>
+                <td><span class="badge badge-low">Completada</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Resultados por Paciente</h2>
+        <table>
+            <tr>
+                <th>Paciente</th><th>Poblacion</th>
+                <th>Mejor Guia HBB</th><th>Score</th>
+                <th>Mejor Guia BCL</th><th>Score</th>
+                <th>ARNm</th>
+            </tr>
+            <tr>
+                <td><strong><a href="reporte_clinico_HG00640.html" style="color:#1a73e8">HG00640</a></strong></td>
+                <td>Puertorriquenos</td>
+                <td>HBB-g66</td>
+                <td><strong class="score-excellent">100</strong></td>
+                <td>BCL-g01</td>
+                <td><strong class="score-good">85</strong></td>
+                <td><strong class="score-excellent">96</strong></td>
+            </tr>
+            <tr>
+                <td><strong><a href="reporte_clinico_HG01140.html" style="color:#1a73e8">HG01140</a></strong></td>
+                <td>Colombianos (Medellin)</td>
+                <td>HBB-g66</td>
+                <td><strong class="score-excellent">100</strong></td>
+                <td>BCL-g01</td>
+                <td><strong class="score-good">85</strong></td>
+                <td><strong class="score-excellent">96</strong></td>
+            </tr>
+            <tr>
+                <td><strong><a href="reporte_clinico_HG01889.html" style="color:#1a73e8">HG01889</a></strong></td>
+                <td>Afrocaribenos (Barbados)</td>
+                <td>HBB-g66</td>
+                <td><strong class="score-excellent">100</strong></td>
+                <td>BCL-g01</td>
+                <td><strong class="score-good">85</strong></td>
+                <td><strong class="score-excellent">96</strong></td>
+            </tr>
+            <tr>
+                <td><strong><a href="reporte_clinico_HG02594.html" style="color:#1a73e8">HG02594</a></strong></td>
+                <td>Gambianos (Div. Occidental)</td>
+                <td>HBB-g66</td>
+                <td><strong class="score-excellent">100</strong></td>
+                <td>BCL-g01</td>
+                <td><strong class="score-good">85</strong></td>
+                <td><strong class="score-excellent">96</strong></td>
+            </tr>
+            <tr>
+                <td><strong><a href="reporte_clinico_HG02923.html" style="color:#1a73e8">HG02923</a></strong></td>
+                <td>Esan (Nigeria)</td>
+                <td>HBB-g66</td>
+                <td><strong class="score-excellent">100</strong></td>
+                <td>BCL-g01</td>
+                <td><strong class="score-good">85</strong></td>
+                <td><strong class="score-excellent">96</strong></td>
+            </tr></table>
+    </div>
+
+    <div class="card">
+        <h2>Diferenciador Clave: Personalizacion</h2>
+        <div class="two-col">
+            <div>
+                <h3>Lo que existe hoy</h3>
+                <ul style="padding-left:20px;color:#5f6368">
+                    <li>CRISPRscan, Benchling: disenan guias con genoma de REFERENCIA</li>
+                    <li>Cas-OFFinder: busca off-targets sin personalizar</li>
+                    <li>Casgevy (Vertex): UNA guia para TODOS los pacientes</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Lo que hace Exonik</h3>
+                <ul style="padding-left:20px;color:#202124">
+                    <li><strong>Toma variantes REALES</strong> del paciente</li>
+                    <li><strong>Cruza</strong> off-targets con SNPs individuales</li>
+                    <li><strong>Recomienda</strong> la guia mas segura para ESE paciente</li>
+                    <li><strong>Diseña</strong> ARNm complementario optimizado</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="disclaimer">
+        <strong>AVISO:</strong> Prototipo computacional con fines educativos y de investigacion.
+        No constituye consejo medico. Requiere validacion experimental. Exonik v0.1.0 (Research Use Only).
+    </div>
+    
+<div class="footer">
+    Exonik v0.1.0 - Plataforma de Diseno de Terapia Genica Personalizada<br>
+    Generado: 2026-02-18 14:42<br>
+    <strong>SOLO PARA INVESTIGACION - NO PARA USO CLINICO</strong>
+</div>
+</div>
+</body>
+</html>
