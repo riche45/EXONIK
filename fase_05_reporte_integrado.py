@@ -699,7 +699,7 @@ def generar_dashboard(datos, graficos):
     mejor_score = 0
     for gid, g in blast.get("resultados", {}).items():
         sc = g["resumen_seguridad"]["score_seguridad"]
-        if sc > mejor_score or (sc == mejor_score and gid.startswith("HBB")):
+        if sc > mejor_score or (sc == mejor_score and gid > mejor_guia):
             mejor_score = sc
             mejor_guia = gid
 
@@ -780,10 +780,12 @@ def generar_dashboard(datos, graficos):
         sc = g["resumen_seguridad"]["score_seguridad"]
         n = g["resumen_seguridad"]["total_off_targets"]
         est = g.get("estrategia", "").replace("_", " ").title()
+        seq_full = g["secuencia"]
+        seq_redacted = f"{seq_full[:5]}{'·' * 10}{seq_full[-5:]}" if len(seq_full) >= 10 else seq_full
         body += f'''
             <tr>
                 <td><strong>{gid}</strong></td>
-                <td class="seq-box" style="padding:4px 8px;font-size:0.8em;background:#f8f9fa;color:#202124">{g["secuencia"]}</td>
+                <td class="seq-box" style="padding:4px 8px;font-size:0.8em;background:#f8f9fa;color:#202124">{seq_redacted} <span style="color:#bdbdbd;font-size:0.75em">({len(seq_full)}nt)</span></td>
                 <td>{g["pam"]}</td>
                 <td>{est}</td>
                 <td>{g["total_hits_blast"]:,}</td>
@@ -883,7 +885,13 @@ def generar_dashboard(datos, graficos):
         {graficos.get("gc_ventanas", "")}
 
         <h3>Secuencia del ARNm Terapeutico (595 nt)</h3>
-        <div class="seq-box">{_colorear_mrna(mrna_seq)}</div>
+        <div class="seq-box">{_colorear_mrna_redactada(mrna_seq)}</div>
+        <div style="background:#fff3e0;border-left:4px solid #ff9800;padding:12px 16px;margin-top:12px;border-radius:4px;font-size:0.9em;color:#5f6368">
+            <strong style="color:#e65100">&#128274; Secuencia protegida</strong> —
+            La secuencia completa del ARNm terapeutico (CDS optimizado + UTRs + Poly-A)
+            esta disponible bajo acuerdo de confidencialidad (NDA).
+            Contacte al equipo de Exonik para acceso completo.
+        </div>
     </div>
     '''
 
@@ -916,7 +924,7 @@ def generar_dashboard(datos, graficos):
                 if not gid.startswith("HBB"):
                     continue
                 sc = ginfo.get("resumen", {}).get("score_personalizado", 0)
-                if sc > mejor_s:
+                if sc > mejor_s or (sc == mejor_s and gid > mejor_g):
                     mejor_s = sc
                     mejor_g = gid
 
@@ -951,10 +959,9 @@ def generar_dashboard(datos, graficos):
 
 
 def _colorear_mrna(seq):
-    """Colorea la secuencia del ARNm por regiones."""
+    """Colorea la secuencia del ARNm por regiones (version completa, solo uso interno)."""
     if not seq:
         return ""
-    # Estructura: [5'UTR 10] [CDS 444] [3'UTR 21] [PolyA 120]
     utr5 = seq[:10]
     cds = seq[10:454]
     utr3 = seq[454:475]
@@ -966,6 +973,28 @@ def _colorear_mrna(seq):
         f'<span style="color:#2196f3" title="3\'UTR (21nt)">{utr3}</span>'
         f'<span style="color:#9e9e9e" title="Poly-A (120nt)">{polya}</span>'
     )
+
+
+def _colorear_mrna_redactada(seq):
+    """Muestra solo un preview del ARNm con regiones redactadas para proteccion de IP."""
+    if not seq:
+        return ""
+    utr5 = seq[:10]
+    cds_preview = seq[10:40]
+    utr3_preview = seq[454:475]
+    polya_preview = seq[475:495]
+
+    redacted = (
+        '<span style="color:#9e9e9e;font-style:italic">[5\'Cap m7G] </span>'
+        f'<span style="color:#ff9800" title="5\'UTR Kozak (10nt)">{utr5}</span>'
+        f'<span style="color:#4caf50" title="CDS preview (30 de 444nt)">{cds_preview}</span>'
+        '<span style="color:#78909c;letter-spacing:2px" title="CDS redactado">'
+        ' &#x2022;&#x2022;&#x2022; [414 nt protegidos] &#x2022;&#x2022;&#x2022; </span>'
+        f'<span style="color:#2196f3" title="3\'UTR (21nt)">{utr3_preview}</span>'
+        f'<span style="color:#9e9e9e" title="Poly-A preview (20 de 120nt)">{polya_preview}</span>'
+        '<span style="color:#78909c;letter-spacing:2px"> &#x2022;&#x2022;&#x2022;(A)120</span>'
+    )
+    return redacted
 
 
 # =============================================================================
@@ -1077,11 +1106,11 @@ def generar_reporte_clinico(muestra, datos):
                 <td>{" ".join(efecto_parts)}</td>
             </tr>'''
 
-        # Rastrear mejor guia
-        if gid.startswith("HBB") and sc_per > mejor_score_hbb:
+        # Rastrear mejor guia (tie-breaker: mayor ID alfabetico)
+        if gid.startswith("HBB") and (sc_per > mejor_score_hbb or (sc_per == mejor_score_hbb and gid > mejor_guia_hbb)):
             mejor_score_hbb = sc_per
             mejor_guia_hbb = gid
-        elif gid.startswith("BCL") and sc_per > mejor_score_bcl:
+        elif gid.startswith("BCL") and (sc_per > mejor_score_bcl or (sc_per == mejor_score_bcl and gid > mejor_guia_bcl)):
             mejor_score_bcl = sc_per
             mejor_guia_bcl = gid
 
@@ -1224,10 +1253,10 @@ def generar_resumen_ejecutivo(datos):
         mejor_bcl, sc_bcl = "N/A", 0
         for gid, ginfo in perfil.get("guias", {}).items():
             sc = ginfo.get("resumen", {}).get("score_personalizado", 0)
-            if gid.startswith("HBB") and sc > sc_hbb:
+            if gid.startswith("HBB") and (sc > sc_hbb or (sc == sc_hbb and gid > mejor_hbb)):
                 sc_hbb = sc
                 mejor_hbb = gid
-            elif gid.startswith("BCL") and sc > sc_bcl:
+            elif gid.startswith("BCL") and (sc > sc_bcl or (sc == sc_bcl and gid > mejor_bcl)):
                 sc_bcl = sc
                 mejor_bcl = gid
 
@@ -1357,7 +1386,7 @@ def generar_secuencias_lab(datos):
         for gid, ginfo in perfil.get("guias", {}).items():
             if gid.startswith("HBB"):
                 sc = ginfo.get("resumen", {}).get("score_personalizado", 0)
-                if sc > sc_hbb:
+                if sc > sc_hbb or (sc == sc_hbb and gid > mejor_hbb):
                     sc_hbb = sc
                     mejor_hbb = gid
 
