@@ -632,7 +632,7 @@ def generar_graficos(datos):
             graficos["gc_ventanas"] = ""
     else:
         graficos["gc_ventanas"] = ""
-
+ 
     # =========================================================================
     # GRAFICO 6: Comparacion de estrategias de optimizacion (barras agrupadas)
     # =========================================================================
