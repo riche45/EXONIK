@@ -103,9 +103,18 @@ DISEASE = Disease(
     alt_cromosoma="chr2",
     alt_pos_inicio=60716189,
     alt_pos_fin=60728612,
+    alt_guide_prefix="BCL",       # conserva los IDs de guía ya validados (BCL-gNN)
 
     prevalencia="~20-25 millones con SCA; ~300 millones portadores",
     terapia_aprobada="Casgevy / Lyfgenia (2023) — CRISPR, ~$2.2M por paciente",
     uniprot_id="P68871",          # HBB humana
     poblaciones_interes=("ACB", "ESN", "GWD", "CLM", "PUR"),
+
+    # Etiquetas de presentacion (textos originales, para reporte identico)
+    proteina_nombre="Hemoglobina Beta (HBB) normal",
+    proteina_funcion="Transporte de oxigeno en eritrocitos",
+    terapia_objetivo="Reemplazar HbS defectuosa por HbA funcional",
+    tejido_objetivo="Precursores eritroides (medula osea)",
+    targeting="Anti-CD71 (receptor de transferrina)",
+    nota_inmunogenicidad="HBB es proteina endogena -> riesgo inmune minimo",
 )

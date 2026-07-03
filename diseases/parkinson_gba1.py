@@ -132,4 +132,12 @@ DISEASE = Disease(
     terapia_aprobada="Ninguna terapia modificadora aprobada (jul-2026); GBA1 en ensayos",
     uniprot_id="P04062",          # GCasa humana
     poblaciones_interes=("CEU", "TSI", "GIH", "ASW", "MXL"),
+
+    # Etiquetas de presentacion para el reporte de ARNm (Fase 4)
+    proteina_nombre="Glucocerebrosidasa (GCasa / GBA1) funcional",
+    proteina_funcion="Hidrolisis lisosomal de glucosilceramida (GlcCer)",
+    terapia_objetivo="Restaurar actividad de GCasa (augmentacion de GBA1)",
+    tejido_objetivo="Neuronas y microglia del SNC; macrofagos",
+    targeting="Ligandos de paso de barrera hematoencefalica (BHE)",
+    nota_inmunogenicidad="GCasa es proteina endogena; vigilar respuesta anti-GCasa en deficit severo",
 )

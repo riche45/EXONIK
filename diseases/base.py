@@ -80,11 +80,26 @@ class Disease:
     alt_pos_inicio: Optional[int] = None
     alt_pos_fin: Optional[int] = None
 
+    # --- Prefijos para nombrar guías CRISPR (compatibilidad con IDs existentes) ---
+    # Por defecto el prefijo primario = gen. El alternativo = alt_nombre.
+    # En SCA se fija alt_guide_prefix="BCL" para conservar los IDs ya validados.
+    guide_prefix: Optional[str] = None
+    alt_guide_prefix: Optional[str] = None
+
     # --- Metadatos para pitch / reportes ---
     prevalencia: str = ""          # texto libre (ej. "~20-25M en el mundo")
     terapia_aprobada: str = ""     # estado de terapia aprobada (para narrativa)
     uniprot_id: str = ""           # para AlphaFold / Fase 6
     poblaciones_interes: tuple = field(default_factory=tuple)
+
+    # --- Etiquetas de presentacion para el reporte de ARNm (Fase 4) ---
+    # Vacio => la Fase 4 usa un texto por defecto derivado del gen.
+    proteina_nombre: str = ""      # ej. "Hemoglobina Beta (HBB) normal"
+    proteina_funcion: str = ""     # ej. "Transporte de oxigeno en eritrocitos"
+    terapia_objetivo: str = ""     # objetivo terapeutico (1 linea)
+    tejido_objetivo: str = ""      # tejido/celula diana de la entrega
+    targeting: str = ""            # ligando/estrategia de targeting
+    nota_inmunogenicidad: str = "" # nota final de la seccion de inmunogenicidad
 
     def __post_init__(self):
         if self.estrategia not in ESTRATEGIAS:
@@ -92,6 +107,16 @@ class Disease:
                 f"Estrategia '{self.estrategia}' no válida para {self.key}. "
                 f"Usar una de: {ESTRATEGIAS}"
             )
+
+    @property
+    def prefijo_guia(self) -> str:
+        """Prefijo para nombrar guías del target primario (ej. 'HBB', 'GBA1')."""
+        return self.guide_prefix or self.gene
+
+    @property
+    def prefijo_guia_alt(self) -> str:
+        """Prefijo para nombrar guías del target secundario (ej. 'BCL')."""
+        return self.alt_guide_prefix or (self.alt_nombre or "ALT")
 
     @property
     def cds_para_arnm(self) -> str:
