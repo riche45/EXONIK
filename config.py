@@ -1,123 +1,86 @@
 """
 ===============================================================================
   Exonik - Plataforma de Diseño de Terapia Génica Personalizada
-  Configuración y Constantes para Anemia Falciforme (SCA)
-  Versión: 0.1.0 (Prototipo)
+  CONFIGURACIÓN CENTRAL (cargador multi-enfermedad)
+  Versión: 0.2.0 (Plataforma modular)
 ===============================================================================
 
-Este archivo contiene todas las secuencias de referencia, tablas de codones,
-configuraciones de CRISPR y datos genómicos necesarios para el análisis.
+Este archivo cumple dos funciones:
 
-La Anemia Falciforme (Sickle Cell Anemia, SCA) es causada por una mutación
-puntual en el gen HBB (Hemoglobina Beta):
-  - Mutación: c.20A>T (GAG → GTG en codón 7)
-  - Efecto: Glu → Val (E7V) → Hemoglobina S (HbS) anormal
-  - Herencia: Autosómica recesiva
-  - Cromosoma: 11 (chr11:5,225,464-5,227,071 en GRCh38)
+  1. CONSTANTES GENÉRICAS (independientes de la enfermedad): tablas de codones,
+     nucleasas CRISPR, genes críticos, configuración de ARNm, etc.
+
+  2. CARGADOR DE LA ENFERMEDAD ACTIVA: selecciona una enfermedad del paquete
+     `diseases/` (según la variable de entorno EXONIK_DISEASE, por defecto
+     "sca") y re-exporta sus datos bajo los MISMOS nombres que el pipeline ya
+     usaba para la Anemia Falciforme (HBB_*, SCA_*, BCL11A_*).
+
+Esto hace la plataforma modular por enfermedad SIN romper nada: si no defines
+EXONIK_DISEASE, todo se comporta EXACTAMENTE igual que antes (SCA).
+
+Cómo cambiar de enfermedad:
+    # Windows PowerShell
+    $env:EXONIK_DISEASE = "parkinson_gba1"; python fase_01_genomas_reales.py
+    # Linux / macOS
+    EXONIK_DISEASE=beta_thal python fase_01_genomas_reales.py
 """
 
-VERSION = "0.1.0-prototipo"
+import os
+
+from diseases import get_disease
+
+VERSION = "0.2.0-plataforma"
 NOMBRE_PLATAFORMA = "Exonik - Plataforma de Diseño de Terapia Génica Personalizada"
 
 # =============================================================================
-# SECUENCIAS DE REFERENCIA - GEN HBB (Hemoglobina Beta)
+# SELECCIÓN DE LA ENFERMEDAD ACTIVA
 # =============================================================================
 
-# CDS completa del gen HBB normal (NM_000518.5) - 444 nucleótidos
-# Codifica 147 aminoácidos + codón de parada
-HBB_CDS_NORMAL = (
-    "ATGGTGCACCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTG"
-    "AACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGCTGCTGGTGGTCTACCCTTG"
-    "GACCCAGAGGTTCTTTGAGTCCTTTGGGGATCTGTCCACTCCTGATGCTGTTATGGG"
-    "CAACCCTAAGGTGAAGGCTCATGGCAAGAAAGTGCTCGGTGCCTTTAGTGATGGCCT"
-    "GGCTCACCTGGACAACCTCAAGGGCACCTTTGCTCACTGCAGTGAATTCTCACTGGA"
-    "CAAAGCCTTTGAGGAACTGATGATGTGCTCGATGCCAGCCCATCACTTTGGCAAAGA"
-    "ATTCACCCCACCAGTGCAGGCTGCCTATCAGAAAGTGGTGGCTGGTGTGGCTAATGC"
-    "CCTGGCCCACAAGTATCACTAA"
-)
-
-# CDS del gen HBB con mutación SCA (c.20A>T)
-# Posición 19 (0-indexed): A → T, convierte GAG (Glu) → GTG (Val)
-HBB_CDS_SCA = (
-    "ATGGTGCACCTGACTCCTGTGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTG"
-    "AACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGCTGCTGGTGGTCTACCCTTG"
-    "GACCCAGAGGTTCTTTGAGTCCTTTGGGGATCTGTCCACTCCTGATGCTGTTATGGG"
-    "CAACCCTAAGGTGAAGGCTCATGGCAAGAAAGTGCTCGGTGCCTTTAGTGATGGCCT"
-    "GGCTCACCTGGACAACCTCAAGGGCACCTTTGCTCACTGCAGTGAATTCTCACTGGA"
-    "CAAAGCCTTTGAGGAACTGATGATGTGCTCGATGCCAGCCCATCACTTTGGCAAAGA"
-    "ATTCACCCCACCAGTGCAGGCTGCCTATCAGAAAGTGGTGGCTGGTGTGGCTAATGC"
-    "CCTGGCCCACAAGTATCACTAA"
-)
-
-# Posición exacta de la mutación SCA en el CDS
-SCA_POS_CDS = 19          # 0-indexed en el CDS (nucleótido 20, c.20A>T)
-SCA_REF = "A"             # Nucleótido normal
-SCA_ALT = "T"             # Nucleótido mutado
-SCA_CODON_NORMAL = "GAG"  # Glutámico (Glu, E)
-SCA_CODON_MUTADO = "GTG"  # Valina (Val, V)
-SCA_RS_ID = "rs334"       # ID en dbSNP
-
-# Región genómica del gen HBB (incluye flancos para búsqueda de guías CRISPR)
-# chr11:5,226,600-5,227,200 (GRCh38), ~600 bp centrados en el sitio de mutación
-# (Cadena codificante, simplificada para el prototipo)
-HBB_REGION_GENOMICA = (
-    "TAAACTGCAGGCATGCAAGCTTGGCGTAATCATGGTCATAGCTGTTTCCTGTGTGAAATTGT"
-    "TATCCGCTCACAATTCCACACAACATACGAGCCGGAAGCATAAAGTGTAAAGCCTGGGGTGC"
-    "CTAATGAGTGAGCTAACTCACATTAATTGCGTTGCGCTCACTGCCCGCTTTCCAGTCGGGA"
-    "AACCTGTCGTGCCAGCTGCATTAATGAATCGGCCAACGCGCGGGGAGAGGCGGTTTGCGTA"
-    "TTGGGCGCTCTTCCGCTTCCTCGCTCACTGACTCGCTGCGCTCGGTCGTTCGGCTGCGGCG"
-    "ACATTTGCTTCTGACACAACTGTGTTCACTAGCAACCTCAAACAGACACCATGGTGCACCTG"
-    "ACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTG"
-    "GTGGTGAGGCCCTGGGCAGGCTGCTGGTGGTCTACCCTTGGACCCAGAGGTTCTTTGAGTC"
-    "CTTTGGGGATCTGTCCACTCCTGATGCTGTTATGGGCAACCCTAAGGTGAAGGCTCATGGCA"
-    "AGAAAGTGCTCGGTGCCTTTAGTGATGGCCTGGCTCACCTGGACAACCTCAAGGGCACCTTT"
-)
-
-# Offset: la posición del ATG de inicio en HBB_REGION_GENOMICA
-HBB_ATG_OFFSET = 339  # Posición aproximada del ATG en la región genómica
-
-# Coordenadas genómicas (GRCh38)
-HBB_CROMOSOMA = "chr11"
-HBB_POS_GENOMICA_MUTACION = 5227002  # Posición genómica de c.20A>T
+ENFERMEDAD_ACTIVA = os.environ.get("EXONIK_DISEASE", "sca")
+DISEASE = get_disease(ENFERMEDAD_ACTIVA)
 
 # =============================================================================
-# BCL11A ENHANCER - Estrategia alternativa
+# RE-EXPORTACIÓN A NOMBRES LEGACY (compatibilidad total con el pipeline SCA)
 # =============================================================================
-# La disrupción del enhancer eritroide de BCL11A reactiva la hemoglobina
-# fetal (HbF), que compensa el defecto de HbS.
-# Esta es la estrategia usada por Casgevy (primera terapia CRISPR aprobada).
+# El pipeline (Fases 1-6, módulos 1-3) importa estos nombres. Aquí los
+# apuntamos a la enfermedad activa. Para SCA son idénticos a los originales.
 
-BCL11A_REGION_ENHANCER = (
-    "CTAACAGTTGCTTTTATCACAGGCTCCAGGAAGGGTTTGGCCTCTGATTAGGGTGCAGCGATG"
-    "CACTCATGATGGCACTGACTCTTTCAAGGGTCCTGAGTCCAGCAGTGTGAATCACTGTGTAA"
-    "GCAGGATCCAGGGCGACTGTTTCTAGAGATAATCTGATAATTTGTGATTATGATGTAATCAGG"
-    "CATCTCAGCAAAGACTAAACCTGCAATTGATGGCCCTGTCATTTCATCTGCAATACCTTGGCT"
-    "TCTTGAAGACAGGGGCCAGTGTCCACTCCTGGTACCAGGATCCCTTTCCTGAAGGGATTTACT"
-)
-BCL11A_CROMOSOMA = "chr2"
-BCL11A_POS_INICIO = 60716189
-BCL11A_POS_FIN = 60728612
+# --- Target primario (gen de la enfermedad) ---
+HBB_CDS_NORMAL = DISEASE.cds_normal
+HBB_CDS_SCA = DISEASE.cds_mutante          # "mutante" del gen activo
+HBB_PROTEINA_NORMAL = DISEASE.proteina_normal
+HBB_PROTEINA_SCA = DISEASE.proteina_mutante
+HBB_REGION_GENOMICA = DISEASE.region_genomica
+HBB_ATG_OFFSET = DISEASE.atg_offset
+HBB_CROMOSOMA = DISEASE.cromosoma
+HBB_POS_GENOMICA_MUTACION = DISEASE.pos_genomica_mutacion
+
+# --- Variante patogénica ---
+SCA_POS_CDS = DISEASE.variante_pos_cds
+SCA_REF = DISEASE.variante_ref
+SCA_ALT = DISEASE.variante_alt
+SCA_CODON_NORMAL = DISEASE.codon_normal
+SCA_CODON_MUTADO = DISEASE.codon_mutante
+SCA_RS_ID = DISEASE.variante_rs_id
+
+# --- Target secundario / estrategia alternativa (BCL11A en SCA) ---
+# Si la enfermedad no tiene target secundario, se degrada al target primario
+# para que los imports existentes no fallen (las fases que usan la estrategia
+# alternativa solo aplican cuando la enfermedad la define).
+BCL11A_REGION_ENHANCER = DISEASE.alt_region or DISEASE.region_genomica
+BCL11A_CROMOSOMA = DISEASE.alt_cromosoma or DISEASE.cromosoma
+BCL11A_POS_INICIO = DISEASE.alt_pos_inicio or DISEASE.pos_genomica_mutacion
+BCL11A_POS_FIN = DISEASE.alt_pos_fin or DISEASE.pos_genomica_mutacion
+
+# --- Nombres genéricos (recomendados para código nuevo/enfermedades nuevas) ---
+GEN_NOMBRE = DISEASE.gene
+CDS_NORMAL = DISEASE.cds_normal
+CDS_MUTANTE = DISEASE.cds_mutante
+CDS_TERAPEUTICO = DISEASE.cds_para_arnm
+ESTRATEGIA_TERAPEUTICA = DISEASE.estrategia
 
 # =============================================================================
-# PROTEÍNAS DE HEMOGLOBINA BETA
-# =============================================================================
-
-# Proteína HBB normal (147 aminoácidos)
-HBB_PROTEINA_NORMAL = (
-    "MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKV"
-    "LGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVA"
-    "GVANALAHKYH"
-)
-
-# Proteína HBB con mutación SCA (E7V)
-HBB_PROTEINA_SCA = (
-    "MVHLTPVEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKV"
-    "LGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVA"
-    "GVANALAHKYH"
-)
-
-# =============================================================================
-# TABLA DE CODONES HUMANOS
+# TABLA DE CODONES HUMANOS  (genérico — no depende de la enfermedad)
 # =============================================================================
 
 # Codón más frecuente por aminoácido en humanos
@@ -199,7 +162,7 @@ GENES_CRITICOS = {
 }
 
 # =============================================================================
-# CONFIGURACIÓN DE CRISPR
+# CONFIGURACIÓN DE CRISPR  (genérico)
 # =============================================================================
 
 CRISPR_NUCLEASAS = {
@@ -228,7 +191,7 @@ CRISPR_NUCLEASAS = {
 }
 
 # =============================================================================
-# CONFIGURACIÓN DE ARNm TERAPÉUTICO
+# CONFIGURACIÓN DE ARNm TERAPÉUTICO  (genérico)
 # =============================================================================
 
 MRNM_CONFIG = {
@@ -295,4 +258,3 @@ OFF_TARGETS_DB = {
         "nota": "Región distal a TP53"
     },
 }
-
