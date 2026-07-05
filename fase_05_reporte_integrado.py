@@ -43,12 +43,24 @@ from datetime import datetime
 # =============================================================================
 
 DIR_BASE = os.path.dirname(os.path.abspath(__file__))
-DIR_PACIENTES = os.path.join(DIR_BASE, "datos_pacientes_reales")
-DIR_BLAST = os.path.join(DIR_BASE, "resultados_blast")
-DIR_PERSONAL = os.path.join(DIR_BASE, "resultados_personalizados")
-DIR_MRNA = os.path.join(DIR_BASE, "resultados_mrna")
-DIR_GUIAS = os.path.join(DIR_BASE, "guias_fasta")
-DIR_SALIDA = os.path.join(DIR_BASE, "reporte_integrado")
+sys.path.insert(0, DIR_BASE)
+from config import DISEASE
+
+# Entradas/salidas por enfermedad: SCA usa las carpetas raiz (compatibilidad);
+# las demas enfermedades usan una subcarpeta con su 'key' (expediente separado).
+_SUBDIR_DISEASE = "" if DISEASE.key == "sca" else DISEASE.key
+
+def _ruta_disease(nombre_carpeta):
+    if _SUBDIR_DISEASE:
+        return os.path.join(DIR_BASE, nombre_carpeta, _SUBDIR_DISEASE)
+    return os.path.join(DIR_BASE, nombre_carpeta)
+
+DIR_PACIENTES = _ruta_disease("datos_pacientes_reales")
+DIR_BLAST = _ruta_disease("resultados_blast")
+DIR_PERSONAL = _ruta_disease("resultados_personalizados")
+DIR_MRNA = _ruta_disease("resultados_mrna")
+DIR_GUIAS = _ruta_disease("guias_fasta")
+DIR_SALIDA = _ruta_disease("reporte_integrado")
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -421,8 +433,9 @@ def generar_graficos(datos):
     estrategias = []
     colores_bar = []
 
-    # Ordenar: HBB primero, luego BCL
-    orden = sorted(resultados.keys(), key=lambda x: (0 if x.startswith("HBB") else 1, x))
+    # Ordenar: target primario primero, luego secundario
+    _pref = DISEASE.prefijo_guia
+    orden = sorted(resultados.keys(), key=lambda x: (0 if x.startswith(_pref) else 1, x))
     for gid in orden:
         g = resultados[gid]
         guias_ids.append(gid)
@@ -509,7 +522,7 @@ def generar_graficos(datos):
             for gid in perfiles[pid].get("guias", {}):
                 if gid not in guias_all:
                     guias_all.append(gid)
-        guias_all.sort(key=lambda x: (0 if x.startswith("HBB") else 1, x))
+        guias_all.sort(key=lambda x: (0 if x.startswith(DISEASE.prefijo_guia) else 1, x))
 
         # Construir matriz de scores personalizados
         z_data = []
@@ -672,6 +685,196 @@ def generar_graficos(datos):
         graficos["estrategias_comp"] = ""
 
     return graficos
+
+
+# =============================================================================
+# DASHBOARD FLAGSHIP (enfermedades sin personalizacion, p.ej. Parkinson-GBA1)
+# =============================================================================
+
+def generar_dashboard_flagship(datos, graficos):
+    """Dashboard enfocado para enfermedades sin capa de personalizacion aun.
+
+    Resalta el diseno de guias, el hallazgo de off-targets criticos (p.ej. el
+    pseudogen GBAP1) y el ARNm terapeutico, con narrativa de necesidad no
+    cubierta y valor diferencial. NO incluye secciones por-paciente.
+    """
+    blast = datos.get("blast", {})
+    mrna_data = datos.get("mrna", {})
+    resultados = blast.get("resultados", {})
+    pref = DISEASE.prefijo_guia
+
+    n_guias = blast.get("guias_analizadas", len(resultados))
+    total_ot = sum(g["resumen_seguridad"]["total_off_targets"] for g in resultados.values())
+    total_alto = sum(g["resumen_seguridad"].get("riesgo_alto", 0) for g in resultados.values())
+    guias_100 = [gid for gid, g in resultados.items()
+                 if g["resumen_seguridad"]["score_seguridad"] == 100]
+    mrna_score = mrna_data.get("score_global", 0)
+
+    # Genes off-target de alto riesgo detectados (p.ej. pseudogen GBAP1)
+    genes_ot = {}
+    for gid, g in resultados.items():
+        for ot in g.get("off_targets", []):
+            gen = ot.get("gen_cercano")
+            if gen and ot.get("riesgo_nivel") == "ALTO":
+                genes_ot.setdefault(gen, set()).add(gid)
+
+    nav = '''<div class="nav-links">
+        <a href="#resumen">Resumen</a>
+        <a href="#diferencial">Valor diferencial</a>
+        <a href="#crispr">CRISPR</a>
+        <a href="#offtargets">Off-targets</a>
+        <a href="#mrna">ARNm</a>
+    </div>'''
+
+    body = f'''
+    <div class="header">
+        <h1>EXONIK Dashboard</h1>
+        <div class="subtitle">Diseno de Terapia Genica Personalizada &mdash; Flagship: {DISEASE.nombre}</div>
+        <div class="subtitle" style="margin-top:8px;opacity:0.7">
+            Gen {DISEASE.gene} ({DISEASE.cromosoma}) | Variante {DISEASE.variante_rs_id} |
+            Genoma: {blast.get("genoma_referencia","GRCh38.p14")} | BLAST+ {blast.get("blast_version","")}
+        </div>
+    </div>
+    {nav}
+
+    <div class="card" id="resumen">
+        <h2>Resumen Ejecutivo</h2>
+        <div class="metrics-grid">
+            <div class="metric-box"><div class="value" style="color:{COL_PRIMARY}">{n_guias}</div><div class="label">Guias CRISPR</div></div>
+            <div class="metric-box"><div class="value" style="color:{COL_WARNING}">{total_ot}</div><div class="label">Off-targets reales</div></div>
+            <div class="metric-box"><div class="value" style="color:{COL_DANGER}">{total_alto}</div><div class="label">Off-targets ALTO</div></div>
+            <div class="metric-box"><div class="value" style="color:{COL_SUCCESS}">{len(guias_100)}</div><div class="label">Guias 100/100</div></div>
+            <div class="metric-box"><div class="value {score_class(mrna_score)}">{mrna_score}/100</div><div class="label">Score ARNm</div></div>
+        </div>
+    </div>
+    '''
+
+    genes_txt = ""
+    if genes_ot:
+        items = "".join(
+            f"<li><strong>{gen}</strong>: riesgo ALTO en {len(gids)} guia(s) "
+            f"({', '.join(sorted(gids))}), corte con 0 mismatches</li>"
+            for gen, gids in sorted(genes_ot.items())
+        )
+        genes_txt = f"<ul style='padding-left:20px;color:#c5221f'>{items}</ul>"
+
+    body += f'''
+    <div class="card" id="diferencial" style="border-left:4px solid {COL_DANGER}">
+        <h2>Valor Diferencial &amp; Necesidad No Cubierta</h2>
+        <div class="two-col">
+            <div>
+                <h3>Necesidad no cubierta</h3>
+                <p style="color:#5f6368"><strong>{DISEASE.nombre}</strong>: {DISEASE.terapia_aprobada}.</p>
+                <p style="color:#5f6368">Impacto: {DISEASE.prevalencia}.</p>
+            </div>
+            <div>
+                <h3>Lo que Exonik detecta y un diseno ingenuo no</h3>
+                <p style="color:#5f6368">El analisis contra el genoma humano completo revela off-targets
+                de alto riesgo que un diseno con solo la secuencia del gen pasaria por alto:</p>
+                {genes_txt or "<p style='color:#5f6368'>Sin off-targets de alto riesgo en las guias candidatas.</p>"}
+                <p style="color:#137333;font-size:0.9em">Ademas, Exonik propone {len(guias_100)} guia(s)
+                alternativa(s) con seguridad 100/100.</p>
+            </div>
+        </div>
+    </div>
+    '''
+
+    body += f'''
+    <div class="card" id="crispr">
+        <h2>Analisis de Guias CRISPR ({DISEASE.gene})</h2>
+        <p style="color:#5f6368;margin-bottom:12px">
+            {n_guias} guias disenadas para {DISEASE.gene}, analizadas contra el genoma humano
+            completo ({blast.get("genoma_referencia","GRCh38")}).
+        </p>
+        {graficos.get("guias_seguridad", "")}
+        <table>
+            <tr><th>Guia</th><th>Secuencia (5'&rarr;3')</th><th>PAM</th><th>Hits BLAST</th>
+                <th>Off-targets</th><th>Off-target critico</th><th>Score</th></tr>'''
+    for gid in sorted(resultados.keys(), key=lambda x: (0 if x.startswith(pref) else 1, x)):
+        g = resultados[gid]
+        sc = g["resumen_seguridad"]["score_seguridad"]
+        n = g["resumen_seguridad"]["total_off_targets"]
+        n_alto = g["resumen_seguridad"].get("riesgo_alto", 0)
+        seq_full = g.get("secuencia", "")
+        seq_red = f"{seq_full[:5]}{'&#183;'*10}{seq_full[-5:]}" if len(seq_full) >= 10 else seq_full
+        genes_g = sorted({ot.get("gen_cercano") for ot in g.get("off_targets", [])
+                          if ot.get("gen_cercano") and ot.get("riesgo_nivel") == "ALTO"})
+        crit = ", ".join(genes_g) if genes_g else "&mdash;"
+        badge = badge_riesgo("ALTO") if n_alto else (badge_riesgo("BAJO") if n == 0 else badge_riesgo("MEDIO"))
+        body += f'''
+            <tr>
+                <td><strong>{gid}</strong></td>
+                <td style="font-family:monospace;font-size:0.8em">{seq_red} <span style="color:#bdbdbd">({len(seq_full)}nt)</span></td>
+                <td>{g.get("pam","")}</td>
+                <td>{g.get("total_hits_blast",0):,}</td>
+                <td>{n} {badge}</td>
+                <td>{crit}</td>
+                <td><strong class="{score_class(sc)}">{sc}/100</strong></td>
+            </tr>'''
+    body += '</table></div>'
+
+    body += f'''
+    <div class="card" id="offtargets">
+        <h2>Mapa de Off-targets Genomicos</h2>
+        <p style="color:#5f6368;margin-bottom:12px">
+            Cada punto es un sitio donde Cas9 podria cortar fuera del objetivo. Y = mismatches
+            (0 = match perfecto = mas peligroso). Los sitios en pseudogenes aparecen con 0 mismatches.
+        </p>
+        {graficos.get("ot_cromosoma", "")}
+    </div>
+    '''
+
+    mrna = mrna_data.get("mrna", {})
+    aug_score = mrna_data.get("accesibilidad_aug", {}).get("score_accesibilidad", 0)
+    inmuno_score = mrna_data.get("inmunogenicidad", {}).get("score", 0)
+    estab_score = mrna_data.get("estabilidad", {}).get("score_estabilidad", 0)
+    vida_media = mrna_data.get("estabilidad", {}).get("vida_media_estimada", "?")
+    prot_nombre = mrna_data.get("proteina", {}).get("nombre", f"{DISEASE.gene} funcional")
+    mejor_est = mrna_data.get("optimizacion", {}).get("mejor_estrategia", "")
+    cds = mrna_data.get("optimizacion", {}).get("estrategias", {}).get(mejor_est, {}).get("cds", "")
+    cds_len = len(cds)
+    n_prot = int(cds_len / 3) - 1 if cds_len else 0
+
+    body += f'''
+    <div class="card" id="mrna">
+        <h2>ARNm Terapeutico &mdash; {prot_nombre}</h2>
+        <div class="metrics-grid">
+            <div class="metric-box"><div class="value {score_class(mrna_score)}">{mrna_score}/100</div><div class="label">Score Global</div>{progress_bar_html(mrna_score)}</div>
+            <div class="metric-box"><div class="value {score_class(aug_score)}">{aug_score}/100</div><div class="label">AUG Accesible</div>{progress_bar_html(aug_score)}</div>
+            <div class="metric-box"><div class="value {score_class(inmuno_score)}">{inmuno_score}/100</div><div class="label">Inmunogenicidad</div>{progress_bar_html(inmuno_score)}</div>
+            <div class="metric-box"><div class="value {score_class(estab_score)}">{estab_score}%</div><div class="label">Estabilidad</div>{progress_bar_html(estab_score)}</div>
+        </div>
+        <div class="two-col">
+            <div>
+                <h3>Propiedades del ARNm</h3>
+                <table>
+                    <tr><td>Longitud total</td><td><strong>{mrna.get("longitud",0)} nt</strong></td></tr>
+                    <tr><td>CDS (codificante)</td><td>{cds_len} nt ({n_prot} codones)</td></tr>
+                    <tr><td>GC content</td><td>{mrna.get("gc_content",0):.1f}%</td></tr>
+                    <tr><td>Cap 5'</td><td>{mrna.get("cap","?")}</td></tr>
+                    <tr><td>Modificacion</td><td>{mrna.get("modificacion","?")}</td></tr>
+                    <tr><td>Vida media estimada</td><td>{vida_media}</td></tr>
+                </table>
+            </div>
+            <div>{graficos.get("radar_mrna", "")}</div>
+        </div>
+        {graficos.get("estrategias_comp", "")}
+        {graficos.get("gc_ventanas", "")}
+        <div style="background:#fff3e0;border-left:4px solid #ff9800;padding:12px 16px;margin-top:12px;border-radius:4px;font-size:0.9em;color:#5f6368">
+            <strong style="color:#e65100">&#128274; Secuencia protegida</strong> &mdash;
+            El ARNm terapeutico completo ({mrna.get("longitud",0)} nt) esta disponible bajo NDA.
+        </div>
+    </div>
+    '''
+
+    body += '''
+    <div class="disclaimer">
+        <strong>AVISO:</strong> Prototipo computacional (in silico) con fines de investigacion.
+        Requiere validacion experimental antes de cualquier uso clinico. Exonik (Research Use Only).
+    </div>
+    '''
+
+    return wrap_html(f"Dashboard {DISEASE.gene} - Exonik", body, nav, include_plotly=True)
 
 
 # =============================================================================
@@ -1422,8 +1625,11 @@ def main():
 
     # Verificar que tenemos datos
     if not datos["pacientes"]:
-        print("\n  [ERROR] No se encontraron pacientes. Ejecuta Fase 1 primero.")
-        sys.exit(1)
+        if DISEASE.key == "sca":
+            print("\n  [ERROR] No se encontraron pacientes. Ejecuta Fase 1 primero.")
+            sys.exit(1)
+        print(f"\n  [i] {DISEASE.nombre}: sin pacientes (personalizacion no ejecutada).")
+        print("      Se generara un dashboard de plataforma/flagship (Fase 2 + Fase 4).")
 
     # --- 2. Generar graficos ---
     print("\n  Generando graficos interactivos...")
@@ -1437,7 +1643,10 @@ def main():
 
     # --- 3. Generar dashboard ---
     print("\n  Generando dashboard principal...")
-    dashboard_html = generar_dashboard(datos, graficos)
+    if DISEASE.key == "sca":
+        dashboard_html = generar_dashboard(datos, graficos)
+    else:
+        dashboard_html = generar_dashboard_flagship(datos, graficos)
     dashboard_path = os.path.join(DIR_SALIDA, "dashboard_exonik.html")
     with open(dashboard_path, "w", encoding="utf-8") as f:
         f.write(dashboard_html)
@@ -1452,27 +1661,29 @@ def main():
             f.write(reporte_html)
         print(f"        -> reporte_clinico_{muestra}.html")
 
-    # --- 5. Generar resumen ejecutivo ---
-    print("\n  Generando resumen ejecutivo...")
-    resumen_html = generar_resumen_ejecutivo(datos)
-    resumen_path = os.path.join(DIR_SALIDA, "resumen_ejecutivo.html")
-    with open(resumen_path, "w", encoding="utf-8") as f:
-        f.write(resumen_html)
-    print(f"        -> {resumen_path}")
+    # --- 5 y 6: resumen ejecutivo + secuencias lab (pipeline por-paciente de SCA) ---
+    if DISEASE.key == "sca":
+        # --- 5. Generar resumen ejecutivo ---
+        print("\n  Generando resumen ejecutivo...")
+        resumen_html = generar_resumen_ejecutivo(datos)
+        resumen_path = os.path.join(DIR_SALIDA, "resumen_ejecutivo.html")
+        with open(resumen_path, "w", encoding="utf-8") as f:
+            f.write(resumen_html)
+        print(f"        -> {resumen_path}")
 
-    # --- 6. Generar secuencias para laboratorio ---
-    print("\n  Exportando secuencias para laboratorio...")
-    lab_text = generar_secuencias_lab(datos)
-    lab_path = os.path.join(DIR_SALIDA, "secuencias_laboratorio.txt")
-    with open(lab_path, "w", encoding="utf-8") as f:
-        f.write(lab_text)
-    print(f"        -> {lab_path}")
+        # --- 6. Generar secuencias para laboratorio ---
+        print("\n  Exportando secuencias para laboratorio...")
+        lab_text = generar_secuencias_lab(datos)
+        lab_path = os.path.join(DIR_SALIDA, "secuencias_laboratorio.txt")
+        with open(lab_path, "w", encoding="utf-8") as f:
+            f.write(lab_text)
+        print(f"        -> {lab_path}")
 
     # --- Resumen final ---
-    n_archivos = 2 + len(datos["pacientes"]) + 2  # dashboard + resumen + reportes + lab
+    archivos = sorted(os.listdir(DIR_SALIDA))
     print("\n" + "=" * 60)
     print(f"  FASE 5 COMPLETADA")
-    print(f"  {n_archivos} archivos generados en: reporte_integrado/")
+    print(f"  {len(archivos)} archivos generados en: {DIR_SALIDA}")
     print("=" * 60)
     print(f"\n  Para ver el dashboard, abre en tu navegador:")
     print(f"  {dashboard_path}")

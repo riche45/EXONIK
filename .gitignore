@@ -60,6 +60,13 @@ reporte_integrado/reporte_clinico_HG02923.html
 reporte_integrado/secuencias_laboratorio.txt
 
 # ─────────────────────────────────────────────
+# 🧪 Scripts de verificación locales (no publicar; dependen del IP core)
+# ─────────────────────────────────────────────
+_verify_refactor.py
+_verify_disease.py
+_orig_config_git.txt
+
+# ─────────────────────────────────────────────
 # 🐍 Python — Caché y entornos
 # ─────────────────────────────────────────────
 __pycache__/
