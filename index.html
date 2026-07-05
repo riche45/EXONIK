@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EXONIK — Precision &amp; Personalized Gene Therapy Design Platform</title>
+<meta name="description" content="EXONIK is a computational platform that designs precision, patient-personalizable gene therapies. Flagship: Parkinson's disease (GBA1) — catching hidden GBAP1 off-targets a gene-only design would miss." />
+<meta name="author" content="Richard Garcia Vizcaino" />
+<meta property="og:title" content="EXONIK — Precision &amp; Personalized Gene Therapy Design Platform" />
+<meta property="og:description" content="Flagship: Parkinson's disease (GBA1). Genome-wide CRISPR off-target screening + therapeutic mRNA design. Validated on Sickle Cell, redirected to Parkinson by configuration alone." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://riche45.github.io/EXONIK_Biotech/" />
+<meta property="og:image" content="https://riche45.github.io/EXONIK_Biotech/screenshots/Parkinson_Dashboard_Resumen.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #070b11;
+  --bg-2: #0b1119;
+  --panel: #0f1620;
+  --panel-2: #131c28;
+  --border: #1f2a37;
+  --border-2: #29384a;
+  --text: #e7eef6;
+  --muted: #93a1b3;
+  --faint: #5f6f82;
+  --teal: #2dd4bf;
+  --teal-dim: #14b8a6;
+  --violet: #8b7cf6;
+  --violet-dim: #6d5ce6;
+  --danger: #ff6b6b;
+  --success: #46d17f;
+  --warn: #ffb454;
+  --grad: linear-gradient(120deg, #2dd4bf 0%, #6d5ce6 100%);
+  --grad-soft: linear-gradient(120deg, rgba(45,212,191,.14), rgba(139,124,246,.14));
+  --shadow: 0 20px 60px -20px rgba(0,0,0,.7);
+  --radius: 16px;
+  --maxw: 1160px;
+}
+html[data-theme="light"] {
+  --bg: #f6f8fb;
+  --bg-2: #eef2f7;
+  --panel: #ffffff;
+  --panel-2: #f4f7fb;
+  --border: #e2e8f0;
+  --border-2: #d3dce7;
+  --text: #0d1a2b;
+  --muted: #47586c;
+  --faint: #7688a0;
+  --grad-soft: linear-gradient(120deg, rgba(20,184,166,.10), rgba(109,92,230,.10));
+  --shadow: 0 20px 50px -24px rgba(20,40,80,.28);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+.accent { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* ---------- NAV ---------- */
+header.nav {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(14px);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: .5px; }
+.brand .dot { width: 22px; height: 22px; border-radius: 6px; background: var(--grad); display: inline-block; position: relative; }
+.brand .dot::after { content:""; position:absolute; inset:5px; border-radius:3px; background: var(--bg); }
+.nav-links { display: flex; align-items: center; gap: 26px; }
+.nav-links a.link { color: var(--muted); font-size: 14px; font-weight: 500; transition: color .2s; }
+.nav-links a.link:hover { color: var(--text); }
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 9px 16px; border-radius: 10px; border: 1px solid var(--border-2); background: var(--panel); color: var(--text); cursor: pointer; transition: all .2s; white-space: nowrap; }
+.btn:hover { border-color: var(--teal); transform: translateY(-1px); }
+.btn.primary { background: var(--grad); border: none; color: #04121a; }
+.btn.primary:hover { filter: brightness(1.08); box-shadow: 0 10px 30px -8px rgba(45,212,191,.5); }
+.btn svg { width: 16px; height: 16px; }
+.icon-btn { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; border: 1px solid var(--border-2); background: var(--panel); cursor: pointer; color: var(--muted); transition: all .2s; }
+.icon-btn:hover { color: var(--text); border-color: var(--teal); }
+.icon-btn svg { width: 18px; height: 18px; }
+#burger { display: none; }
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+}
+
+/* ---------- HERO ---------- */
+.hero { position: relative; padding: 96px 0 72px; overflow: hidden; }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -2;
+  background:
+    radial-gradient(60% 50% at 18% 0%, rgba(45,212,191,.16), transparent 60%),
+    radial-gradient(50% 45% at 90% 10%, rgba(139,124,246,.16), transparent 60%);
+}
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(70% 60% at 50% 0%, #000 30%, transparent 78%);
+}
+.pill { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; letter-spacing: .3px; color: var(--teal); background: rgba(45,212,191,.1); border: 1px solid rgba(45,212,191,.28); padding: 6px 13px; border-radius: 999px; }
+.pill .ping { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 0 rgba(45,212,191,.7); animation: ping 1.8s infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(45,212,191,.6);} 70%{ box-shadow: 0 0 0 8px rgba(45,212,191,0);} 100%{ box-shadow: 0 0 0 0 rgba(45,212,191,0);} }
+.hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(38px, 6vw, 68px); line-height: 1.04; font-weight: 700; margin: 22px 0 0; letter-spacing: -1px; max-width: 15ch; }
+.hero .sub { margin-top: 20px; font-size: clamp(16px, 2vw, 19px); color: var(--muted); max-width: 62ch; }
+.quote { margin-top: 26px; padding-left: 18px; border-left: 3px solid var(--teal); color: var(--text); font-style: italic; max-width: 60ch; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+.hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 60px; }
+.stat { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; position: relative; overflow: hidden; }
+.stat::before { content:""; position:absolute; left:0; top:0; height:100%; width:3px; background: var(--grad); }
+.stat .num { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; }
+.stat .lbl { color: var(--muted); font-size: 13px; margin-top: 4px; }
+@media (max-width: 780px) { .hero-stats { grid-template-columns: repeat(2, 1fr); } }
+
+/* ---------- SECTIONS ---------- */
+section { padding: 78px 0; border-top: 1px solid var(--border); }
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); }
+h2.sec { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 4vw, 42px); font-weight: 700; letter-spacing: -.5px; margin: 12px 0 0; }
+.lead { color: var(--muted); font-size: 17px; max-width: 70ch; margin-top: 16px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 40px; }
+@media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; transition: transform .25s, border-color .25s; }
+.card:hover { transform: translateY(-3px); border-color: var(--border-2); }
+.card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; margin-bottom: 10px; display:flex; align-items:center; gap:10px; }
+.card p { color: var(--muted); font-size: 15px; }
+.ic { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; background: var(--grad-soft); border: 1px solid var(--border-2); color: var(--teal); flex: none; }
+.ic svg { width: 20px; height: 20px; }
+
+.codeblock { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--text); overflow-x: auto; line-height: 1.7; white-space: pre; }
+.codeblock .c-key { color: var(--teal); }
+.codeblock .c-danger { color: var(--danger); }
+.codeblock .c-ok { color: var(--success); }
+.codeblock .c-dim { color: var(--faint); }
+
+table.tbl { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14.5px; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+table.tbl th { text-align: left; padding: 14px 16px; background: var(--panel-2); color: var(--muted); font-weight: 600; font-size: 12.5px; letter-spacing: .5px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+table.tbl td { padding: 13px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+table.tbl tr:last-child td { border-bottom: none; }
+table.tbl td strong { font-weight: 700; }
+.tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 6px; }
+.tag.flag { background: rgba(45,212,191,.14); color: var(--teal); }
+.tag.ok { background: rgba(70,209,127,.14); color: var(--success); }
+.tag.mod { background: rgba(139,124,246,.16); color: var(--violet); }
+.tag.hi { background: rgba(255,107,107,.14); color: var(--danger); }
+
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-top: 34px; }
+.split > div { padding: 28px; }
+.split .naive { background: var(--panel); border-right: 1px solid var(--border); }
+.split .exonik { background: var(--grad-soft); }
+.split h4 { font-family:'Space Grotesk',sans-serif; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+.split .naive h4 { color: var(--danger); }
+.split .exonik h4 { color: var(--teal); }
+.split ul { list-style: none; }
+.split li { position: relative; padding-left: 26px; margin-bottom: 12px; color: var(--muted); font-size: 15px; }
+.split li::before { position: absolute; left: 0; top: 1px; font-family:'JetBrains Mono',monospace; }
+.split .naive li::before { content: "×"; color: var(--danger); font-weight: 700; }
+.split .exonik li::before { content: "✓"; color: var(--teal); font-weight: 700; }
+@media (max-width: 720px){ .split { grid-template-columns: 1fr; } .split .naive { border-right: none; border-bottom: 1px solid var(--border); } }
+
+.shot { width: 100%; border-radius: 12px; border: 1px solid var(--border); display: block; }
+figure { margin-top: 26px; }
+figcaption { color: var(--faint); font-size: 13px; margin-top: 10px; text-align: center; }
+
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+@media (max-width: 860px){ .dash-grid { grid-template-columns: 1fr; } }
+.dash { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--panel); transition: border-color .25s, transform .25s; display:flex; flex-direction:column; }
+.dash:hover { border-color: var(--teal); transform: translateY(-3px); }
+.dash img { width: 100%; display: block; border-bottom: 1px solid var(--border); }
+.dash .body { padding: 20px 22px; display:flex; flex-direction:column; gap:8px; flex:1; }
+.dash .body h3 { font-family:'Space Grotesk',sans-serif; font-size: 18px; }
+.dash .body p { color: var(--muted); font-size: 14px; flex:1; }
+.dash .body .go { color: var(--teal); font-weight: 600; font-size: 14px; display:inline-flex; align-items:center; gap:6px; margin-top: 6px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+.chip { border: 1px solid var(--border-2); background: var(--panel); border-radius: 999px; padding: 8px 15px; font-size: 13.5px; color: var(--muted); font-family:'JetBrains Mono',monospace; }
+.chip b { color: var(--text); font-weight: 600; }
+
+/* timeline */
+.timeline { margin-top: 40px; position: relative; padding-left: 28px; }
+.timeline::before { content:""; position:absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border-2); }
+.tl { position: relative; padding-bottom: 26px; }
+.tl::before { content:""; position:absolute; left: -28px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--teal); }
+.tl.done::before { background: var(--teal); }
+.tl h4 { font-family:'Space Grotesk',sans-serif; font-size: 16px; }
+.tl p { color: var(--muted); font-size: 14.5px; }
+.tl .st { font-size: 11.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+.tl.done .st { color: var(--success); }
+.tl.next .st { color: var(--warn); }
+
+.note { margin-top: 30px; border: 1px solid var(--border); border-left: 3px solid var(--violet); background: var(--panel); border-radius: 12px; padding: 20px 24px; color: var(--muted); font-size: 14.5px; }
+
+footer { border-top: 1px solid var(--border); padding: 56px 0 40px; }
+.foot-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 32px; }
+@media (max-width: 780px){ .foot-grid { grid-template-columns: 1fr; gap: 24px; } }
+footer h5 { font-family:'Space Grotesk',sans-serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--faint); margin-bottom: 14px; }
+footer a.f { color: var(--muted); font-size: 14px; display: block; margin-bottom: 9px; transition: color .2s; }
+footer a.f:hover { color: var(--teal); }
+.foot-bottom { margin-top: 40px; padding-top: 22px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--faint); font-size: 13px; }
+.disclaimer { font-size: 12.5px; color: var(--faint); max-width: 60ch; margin-top: 14px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top"><span class="dot"></span> EXONIK</a>
+    <nav class="nav-links">
+      <a class="link" href="#problem">Problem</a>
+      <a class="link" href="#differentiator">Differentiator</a>
+      <a class="link" href="#platform">Platform</a>
+      <a class="link" href="#results">Results</a>
+      <a class="link" href="#dashboards">Dashboards</a>
+      <a class="link" href="#roadmap">Roadmap</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle light / dark">
+        <svg id="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a class="btn primary" href="reporte_integrado/parkinson_gba1/dashboard_exonik.html" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+        Live Dashboard
+      </a>
+    </div>
+  </div>
+</header>
+
+<a id="top"></a>
+<section class="hero" style="border-top:none;">
+  <div class="wrap">
+    <span class="pill"><span class="ping"></span> Prototype v0.2 — Modular Platform</span>
+    <h1>Precision gene therapy design, <span class="accent">engineered per genome</span>.</h1>
+    <p class="sub">EXONIK is a computational platform that designs precision, patient-personalizable gene therapies — from raw genomic data to clinical report. Flagship target: <strong>Parkinson's disease (GBA1)</strong>, a high-impact disease with no approved disease-modifying therapy.</p>
+    <p class="quote">"The same CRISPR guide safe for one patient can be dangerous for another — because their genomes are different."</p>
+    <div class="hero-cta">
+      <a class="btn primary" href="#differentiator">See the differentiator</a>
+      <a class="btn" href="reporte_integrado/parkinson_gba1/dashboard_exonik.html" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+        Open Parkinson dashboard
+      </a>
+      <a class="btn" href="https://github.com/riche45/EXONIK_Biotech" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5A12 12 0 0 0 8.2 23.9c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.7-1.3-1.7-1.1-.7 0-.7 0-.7 1.2 0 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2 0-.4-.5-1.6.2-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 5 18.3 5.3 18.3 5.3c.7 1.6.2 2.8.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>
+        GitHub
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat"><div class="num accent">~10M</div><div class="lbl">People with Parkinson's worldwide</div></div>
+      <div class="stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Approved disease-modifying therapies (Jul 2026)</div></div>
+      <div class="stat"><div class="num" style="color:var(--teal)">3</div><div class="lbl">Hidden GBAP1 off-targets caught</div></div>
+      <div class="stat"><div class="num" style="color:var(--success)">96/100</div><div class="lbl">Therapeutic mRNA design score</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <span class="eyebrow">The Problem</span>
+    <h2 class="sec">An unmet need at genomic scale</h2>
+    <p class="lead">Parkinson's disease affects around 10 million people worldwide, and as of July 2026 there is no approved disease-modifying therapy — every treatment on the market only manages symptoms. The single largest genetic risk factor is the <em>GBA1</em> gene, implicated in roughly 5–15% of cases.</p>
+
+    <div class="grid-2">
+      <div class="codeblock"><span class="c-dim">// Target variant</span>
+<span class="c-key">Gene</span>      GBA1 (Glucocerebrosidase / GCasa) — chr1
+<span class="c-key">Variant</span>   c.1226A&gt;G  |  rs76763715  |  N370S (p.Asn409Ser)
+<span class="c-key">Codon</span>     AAC → AGC   (Asparagine → Serine)
+<span class="c-key">Effect</span>    Reduced lysosomal GCasa activity
+<span class="c-key">Result</span>    Glucosylceramide buildup → Parkinson's risk
+<span class="c-key">Status</span>    <span class="c-danger">No approved disease-modifying therapy</span> (Jul 2026)</div>
+
+      <div class="card" style="align-self:start;">
+        <h3><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5" stroke-linecap="round"/><circle cx="12" cy="16.5" r=".8" fill="currentColor" stroke="none"/></svg></span> The technical hook: the GBAP1 pseudogene</h3>
+        <p><em>GBA1</em> sits ~16 kb from a pseudogene, <strong>GBAP1</strong>, with ~96% sequence identity. Any CRISPR guide designed for <em>GBA1</em> looks almost identical to regions of GBAP1 — a natural minefield of near-identical off-targets. A guide that appears "clean" against the gene alone can, in reality, cut the pseudogene.</p>
+        <p style="margin-top:14px;color:var(--text)"><strong>This is exactly where EXONIK's engine delivers its differential value:</strong> real off-target analysis against the whole genome, plus patient-level SNP personalization.</p>
+      </div>
+    </div>
+    <div class="note">Sickle Cell Disease is not forgotten — it remains EXONIK's fully validated baseline (5 real patients, full personalization). But Parkinson-GBA1 is where the platform proves it can attack a high-impact disease with no approved cure and genetically hostile terrain.</div>
+  </div>
+</section>
+
+<!-- DIFFERENTIATOR -->
+<section id="differentiator">
+  <div class="wrap">
+    <span class="eyebrow">The Differentiator</span>
+    <h2 class="sec">What EXONIK sees that a gene-only design misses</h2>
+    <p class="lead">A conventional "design a guide on the gene sequence" approach would ship guides <span class="mono">GBA1-g86/g87/g88</span> as reasonable candidates. EXONIK ran each guide against the entire GRCh38 reference genome and found the hidden danger.</p>
+
+    <div class="split">
+      <div class="naive">
+        <h4>Naive, gene-only design</h4>
+        <ul>
+          <li>Guides GBA1-g86 / g87 / g88 look like valid candidates</li>
+          <li>No visibility into the rest of the genome</li>
+          <li>Perfect-match (0-mismatch) cut inside the GBAP1 pseudogene goes undetected</li>
+          <li>Ships a guide that cuts in the wrong place</li>
+        </ul>
+      </div>
+      <div class="exonik">
+        <h4>EXONIK genome-wide screening</h4>
+        <ul>
+          <li>Each guide BLASTed against the full human genome (GRCh38)</li>
+          <li>3 guides flagged HIGH-risk: 0-mismatch cut inside GBAP1</li>
+          <li>3 alternative guides identified with 100/100 safety, zero off-targets</li>
+          <li>Roadmap: cross each off-target with the patient's real SNPs</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="codeblock" style="margin-top:24px;"><span class="c-key">Guide GBA1-g86 / g87 / g88</span>
+   ON-target:   chr1:155,235,xxx  (GBA1)  <span class="c-ok">✓ 0 mismatches</span>
+   OFF-target:  chr1:155,215,xxx  (GBAP1 pseudogene)  <span class="c-danger">⚠ HIGH RISK — 0 mismatches</span>
+   → A perfect-match cut in the WRONG place.
+
+<span class="c-key">Guide GBA1-g240 / g85 / g241</span>
+   ON-target only. 0 off-targets. <span class="c-ok">Safety score 100/100 ✓</span></div>
+
+    <figure>
+      <img class="shot" src="screenshots/Parkinson_Dashboard_CRISPR.png" alt="CRISPR guide safety analysis: GBA1 vs GBAP1" />
+      <figcaption>Per-guide safety scores and the exact GBAP1 off-targets — green guides are ready; red guides are the ones a gene-only design would have shipped by mistake.</figcaption>
+    </figure>
+    <p class="lead" style="margin-top:26px;">Nobody is doing genome-wide, patient-personalized off-target screening at scale for these targets. <strong style="color:var(--text)">That is EXONIK's opportunity.</strong></p>
+  </div>
+</section>
+
+<!-- PLATFORM -->
+<section id="platform">
+  <div class="wrap">
+    <span class="eyebrow">The Platform</span>
+    <h2 class="sec">One engine, many diseases</h2>
+    <p class="lead">EXONIK is disease-agnostic by design. The core logic — CRISPR design, off-target BLAST, mRNA design, dashboards — is shared. Each disease is a self-contained module defined by a standard schema. Switching targets is a single environment variable.</p>
+
+    <div class="codeblock" style="margin-top:30px;"><span class="c-dim"># Run the whole pipeline for a different disease — same engine, no code changes</span>
+export EXONIK_DISEASE=<span class="c-key">parkinson_gba1</span>   <span class="c-dim"># or: sca | beta_thal</span></div>
+
+    <table class="tbl">
+      <thead><tr><th>Disease</th><th>Gene</th><th>Variant</th><th>Role in EXONIK</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Parkinson (GBA1)</strong></td><td>GBA1</td><td class="mono">N370S · rs76763715</td><td><span class="tag flag">Flagship</span> Unmet need + GBAP1 differentiator</td></tr>
+        <tr><td><strong>Sickle Cell Disease</strong></td><td>HBB</td><td class="mono">rs334 · GAG→GTG</td><td><span class="tag ok">Validated baseline</span> 5 real patients, full personalization</td></tr>
+        <tr><td><strong>Beta-Thalassemia</strong></td><td>HBB</td><td class="mono">β⁺ / β⁰</td><td><span class="tag mod">Modularity proof</span> Same gene, different variant</td></tr>
+      </tbody>
+    </table>
+    <div class="note">The same platform validated end-to-end on Sickle Cell was redirected to Parkinson-GBA1 <strong>by configuration alone</strong> — the strongest possible evidence that EXONIK scales across monogenic and genetically complex targets.</div>
+
+    <div class="grid-2" style="margin-top:44px;">
+      <div class="card">
+        <h3><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span> Two layers of intelligence</h3>
+        <p><strong style="color:var(--text)">Precision at the variant</strong> — design for the exact disease-causing mutation. <strong style="color:var(--text)">Personalization at the patient</strong> — adapt the safety profile to each individual genome.</p>
+      </div>
+      <div class="card">
+        <h3><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="4"/></svg></span> Root cause, not symptom</h3>
+        <p>Where drug discovery patches a misfolded protein at runtime, EXONIK operates at the most upstream point possible — the genome itself — to fix or restore the code that builds the protein.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section id="approach">
+  <div class="wrap">
+    <span class="eyebrow">Positioning</span>
+    <h2 class="sec">Gene therapy vs. drug discovery</h2>
+    <p class="lead">Both approaches use AI and structural biology. But drug discovery treats the symptom; gene therapy fixes the cause.</p>
+    <table class="tbl" style="margin-top:34px;">
+      <thead><tr><th></th><th>Drug discovery (e.g. Isomorphic Labs)</th><th>EXONIK (gene therapy)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Target</strong></td><td>Protein surface (downstream)</td><td>DNA / mRNA (upstream)</td></tr>
+        <tr><td><strong>Action</strong></td><td>Design a molecule to bind / block the protein</td><td>Edit the genome / restore the missing protein</td></tr>
+        <tr><td><strong>Duration</strong></td><td>Chronic (repeated dosing)</td><td>One-time correction / durable restoration</td></tr>
+        <tr><td><strong>Personalization</strong></td><td>Same drug for all patients</td><td>Each patient's genome analyzed</td></tr>
+        <tr><td><strong>Analogy</strong></td><td>Patching a bug at runtime</td><td>Fixing the source code</td></tr>
+      </tbody>
+    </table>
+    <p class="quote" style="margin-top:28px;">"The best way to fix a bug is not to write a better error handler — it's to fix the line of code that causes it."</p>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="wrap">
+    <span class="eyebrow">Key Results</span>
+    <h2 class="sec">Evidence, not slides</h2>
+    <div class="grid-2" style="margin-top:36px; align-items:start;">
+      <div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:19px;margin-bottom:14px;"><span class="tag flag">Flagship</span> &nbsp;Parkinson's disease (GBA1)</h3>
+        <table class="tbl">
+          <tbody>
+            <tr><td>Target gene</td><td><strong>GBA1</strong> (chr1) — N370S</td></tr>
+            <tr><td>Approved therapy</td><td><strong style="color:var(--danger)">None</strong> (Jul 2026)</td></tr>
+            <tr><td>CRISPR guides designed</td><td><strong>6</strong> vs full GRCh38</td></tr>
+            <tr><td>Perfect-safety guides</td><td><strong style="color:var(--success)">3</strong> — 0 off-targets, 100/100</td></tr>
+            <tr><td>HIGH-risk off-targets</td><td><strong style="color:var(--danger)">3</strong> — all inside GBAP1</td></tr>
+            <tr><td>Therapeutic mRNA</td><td><strong>96/100</strong> (GCasa, 536 aa)</td></tr>
+            <tr><td>AUG accessibility</td><td><strong>100/100</strong></td></tr>
+            <tr><td>Immunogenicity</td><td><strong>Very low</strong> (endogenous)</td></tr>
+            <tr><td>Delivery</td><td>LNP → IV, BBB-crossing ligands</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:19px;margin-bottom:14px;"><span class="tag ok">Validated baseline</span> &nbsp;Sickle Cell (HBB)</h3>
+        <table class="tbl">
+          <tbody>
+            <tr><td>Real patients analyzed</td><td><strong>5</strong> (3 continents)</td></tr>
+            <tr><td>CRISPR guides designed</td><td><strong>12</strong> (HBB + BCL11A)</td></tr>
+            <tr><td>Off-targets found (BLAST)</td><td><strong>12</strong> (chr2, 11, 14)</td></tr>
+            <tr><td>Personalization coverage</td><td><strong>12/12 × 5 patients</strong></td></tr>
+            <tr><td>Best guide</td><td><strong>HBB-g68</strong> — 100/100</td></tr>
+            <tr><td>Therapeutic mRNA</td><td><strong>96/100</strong></td></tr>
+            <tr><td>3D visualizations</td><td><strong>4</strong> interactive HTML</td></tr>
+            <tr><td>Cohorts</td><td>Nigeria, Gambia, Colombia, PR, Caribbean</td></tr>
+            <tr><td>Genome-to-atom mapping</td><td>Guide → GLU-7 cut site</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARDS -->
+<section id="dashboards">
+  <div class="wrap">
+    <span class="eyebrow">Interactive Dashboards</span>
+    <h2 class="sec">Explore the live evidence</h2>
+    <p class="lead">Self-contained, interactive reports — no server required. Open them directly in the browser.</p>
+    <div class="dash-grid">
+      <a class="dash" href="reporte_integrado/parkinson_gba1/dashboard_exonik.html" target="_blank" rel="noopener">
+        <img src="screenshots/Parkinson_Dashboard_Resumen.png" alt="Parkinson flagship dashboard" />
+        <div class="body">
+          <h3>Parkinson (GBA1) — Flagship</h3>
+          <p>Executive summary, differential-value narrative, GBA1-vs-GBAP1 guide safety and therapeutic mRNA metrics.</p>
+          <span class="go">Open dashboard
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </a>
+      <a class="dash" href="reporte_integrado/dashboard_exonik.html" target="_blank" rel="noopener">
+        <img src="screenshots/Guia_CRISPR_Dashboard.png" alt="Sickle Cell dashboard" />
+        <div class="body">
+          <h3>Sickle Cell (HBB) — Baseline</h3>
+          <p>12 CRISPR guides, genomic off-target map and the patient × guide personalization heatmap across the 5-patient cohort.</p>
+          <span class="go">Open dashboard
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <figure>
+      <img class="shot" src="screenshots/HBB_VS_Crispr.png" alt="HBB protein 3D with CRISPR GPS" />
+      <figcaption>Genome to atom — HBB protein with 8 alpha helices (left) and the GPS-CRISPR view showing exactly where guide HBB-g68 cuts at GLU-7, the Sickle Cell mutation site (right).</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="wrap">
+    <span class="eyebrow">Roadmap</span>
+    <h2 class="sec">From in-silico design to platform</h2>
+    <div class="grid-2" style="align-items:start;">
+      <div class="timeline">
+        <div class="tl done"><span class="st">Done</span><h4>Genome-wide CRISPR screening (Parkinson &amp; SCA)</h4><p>Guides designed and BLASTed against the full GRCh38 genome; GBAP1 off-targets detected.</p></div>
+        <div class="tl done"><span class="st">Done</span><h4>Therapeutic mRNA design</h4><p>Codon optimization, secondary structure, immunogenicity and stability — 96/100 for functional GCasa.</p></div>
+        <div class="tl done"><span class="st">Done</span><h4>Modular multi-disease architecture</h4><p>Disease-agnostic engine; new targets added by configuration.</p></div>
+        <div class="tl next"><span class="st">Next</span><h4>Patient-level personalization for Parkinson</h4><p>Cross the GBAP1 off-targets with each patient's real SNPs — "is this guide safe for this genome?"</p></div>
+        <div class="tl next"><span class="st">Next</span><h4>GBA1 3D + GPS-CRISPR</h4><p>GCasa structure (AlphaFold, UniProt P04062) with the N370S site highlighted.</p></div>
+        <div class="tl"><span class="st" style="color:var(--faint)">Future</span><h4>ML &amp; agentic layer</h4><p>Models that learn gene interactions in polygenic disease, served at scale.</p></div>
+      </div>
+      <div>
+        <div class="card">
+          <h3><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg></span> Where EXONIK fits today</h3>
+          <p>Gene-addition (AAV) leads on delivery. EXONIK is the design-and-safety layer that sits on top of any modality — it designs the optimized therapeutic sequence and, critically, catches the near-identical off-targets (like GBAP1) that a gene-only approach would miss.</p>
+        </div>
+        <div class="card" style="margin-top:22px;">
+          <h3><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></span> Delivery &amp; efficacy — honest framing</h3>
+          <p>All designs are computational (in silico) and require experimental validation. mRNA offers fast proof-of-concept but transient expression; durable CNS restoration likely favors AAV — a transgene EXONIK also designs. Delivery across the blood-brain barrier remains the central challenge.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH -->
+<section id="tech">
+  <div class="wrap">
+    <span class="eyebrow">Technology</span>
+    <h2 class="sec">Built on rigorous computational biology</h2>
+    <div class="chips">
+      <span class="chip"><b>Python</b> 3.10+</span>
+      <span class="chip"><b>BLAST+</b> 2.17 · genome-wide off-targets</span>
+      <span class="chip"><b>seqfold</b> · mRNA structure</span>
+      <span class="chip"><b>pyliftover</b> · GRCh38 ↔ 37</span>
+      <span class="chip"><b>plotly</b> · dashboards</span>
+      <span class="chip"><b>py3Dmol</b> · 3D protein</span>
+      <span class="chip"><b>BioPython</b> · PDB parsing</span>
+      <span class="chip"><b>AlphaFold DB / RCSB PDB</b></span>
+      <span class="chip"><b>1000 Genomes</b> · 2,504 people</span>
+      <span class="chip"><b>GRCh38.p14</b> · reference genome</span>
+    </div>
+    <div class="note">Phases 2, 3, 4 and the 3D notebook contain proprietary algorithms (core IP) and are available to research partners under NDA. The public disease modules contain only public reference sequences (NCBI / dbSNP) and the modular architecture — intentionally shown to demonstrate the platform design.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#top" style="margin-bottom:14px;"><span class="dot"></span> EXONIK</a>
+        <p style="color:var(--muted);font-size:14.5px;max-width:44ch;">Precision &amp; Personalized Gene Therapy Design Platform. Validated on Sickle Cell, redirected to Parkinson-GBA1 by configuration alone.</p>
+        <p class="disclaimer"><strong>Research Use Only.</strong> Not approved for clinical use, diagnosis or treatment. Patient data derived from the public 1000 Genomes Project. Any clinical application requires independent laboratory validation and regulatory approval.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <a class="f" href="#problem">The problem</a>
+        <a class="f" href="#differentiator">The differentiator</a>
+        <a class="f" href="#platform">The platform</a>
+        <a class="f" href="#results">Results</a>
+        <a class="f" href="#roadmap">Roadmap</a>
+      </div>
+      <div>
+        <h5>Resources</h5>
+        <a class="f" href="reporte_integrado/parkinson_gba1/dashboard_exonik.html" target="_blank" rel="noopener">Parkinson dashboard</a>
+        <a class="f" href="reporte_integrado/dashboard_exonik.html" target="_blank" rel="noopener">Sickle Cell dashboard</a>
+        <a class="f" href="https://github.com/riche45/EXONIK_Biotech" target="_blank" rel="noopener">GitHub repository</a>
+        <a class="f" href="https://github.com/riche45/EXONIK_Biotech/blob/main/README.md" target="_blank" rel="noopener">Technical README</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Richard Garcia Vizcaino — EXONIK Biotech</span>
+      <span class="mono">v0.2.0 · Modular Platform · 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var saved = localStorage.getItem('exonik-theme');
+  if (saved) root.setAttribute('data-theme', saved);
+  var btn = document.getElementById('theme-toggle');
+  var moon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  var sun = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  function render() { btn.innerHTML = root.getAttribute('data-theme') === 'light' ? sun : moon; }
+  render();
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('exonik-theme', next);
+    render();
+  });
+})();
+</script>
+</body>
+</html>
