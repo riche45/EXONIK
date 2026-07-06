@@ -12,6 +12,9 @@
 <meta property="og:url" content="https://riche45.github.io/EXONIK_Biotech/" />
 <meta property="og:image" content="https://riche45.github.io/EXONIK_Biotech/screenshots/Parkinson_Dashboard_Resumen.png" />
 <meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="favicon.svg" />
+<meta name="theme-color" content="#2dd4bf" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -76,8 +79,9 @@ header.nav {
 }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .brand { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: .5px; }
-.brand .dot { width: 22px; height: 22px; border-radius: 6px; background: var(--grad); display: inline-block; position: relative; }
-.brand .dot::after { content:""; position:absolute; inset:5px; border-radius:3px; background: var(--bg); }
+.brand .logo { width: 26px; height: 26px; display: inline-block; flex: none; }
+.brand .logo g { fill: var(--bg); }
+.brand .k { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .nav-links { display: flex; align-items: center; gap: 26px; }
 .nav-links a.link { color: var(--muted); font-size: 14px; font-weight: 500; transition: color .2s; }
 .nav-links a.link:hover { color: var(--text); }
@@ -172,6 +176,14 @@ table.tbl td strong { font-weight: 700; }
 .shot { width: 100%; border-radius: 12px; border: 1px solid var(--border); display: block; }
 figure { margin-top: 26px; }
 figcaption { color: var(--faint); font-size: 13px; margin-top: 10px; text-align: center; }
+.fig-link { position: relative; display: block; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); transition: border-color .25s; }
+.fig-link:hover { border-color: var(--teal); }
+.fig-link .shot { border: none; border-radius: 0; }
+.fig-link .fig-badge { position: absolute; right: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: #04121a; background: var(--grad); padding: 9px 15px; border-radius: 10px; box-shadow: 0 10px 30px -8px rgba(0,0,0,.6); transition: transform .2s; }
+.fig-link:hover .fig-badge { transform: translateY(-2px); }
+.fig-link .fig-badge svg { width: 15px; height: 15px; }
+.chip.chip-link { transition: color .2s, border-color .2s; }
+.chip.chip-link:hover { color: var(--teal); border-color: var(--teal); }
 
 .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
 @media (max-width: 860px){ .dash-grid { grid-template-columns: 1fr; } }
@@ -215,7 +227,13 @@ footer a.f:hover { color: var(--teal); }
 
 <header class="nav">
   <div class="wrap nav-inner">
-    <a class="brand" href="#top"><span class="dot"></span> EXONIK</a>
+    <a class="brand" href="#top">
+      <svg class="logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs><linearGradient id="lg-nav" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse"><stop stop-color="#2dd4bf"/><stop offset="1" stop-color="#6d5ce6"/></linearGradient></defs>
+        <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#lg-nav)"/>
+        <g fill="var(--bg)"><rect x="19" y="16" width="8" height="32" rx="2"/><rect x="19" y="16" width="26" height="8" rx="2"/><rect x="19" y="28" width="21" height="8" rx="2"/><rect x="19" y="40" width="26" height="8" rx="2"/></g>
+      </svg>
+      EXONI<span class="k">K</span></a>
     <nav class="nav-links">
       <a class="link" href="#problem">Problem</a>
       <a class="link" href="#differentiator">Differentiator</a>
@@ -459,8 +477,20 @@ export EXONIK_DISEASE=<span class="c-key">parkinson_gba1</span>   <span class="c
     </div>
 
     <figure>
-      <img class="shot" src="screenshots/HBB_VS_Crispr.png" alt="HBB protein 3D with CRISPR GPS" />
-      <figcaption>Genome to atom — HBB protein with 8 alpha helices (left) and the GPS-CRISPR view showing exactly where guide HBB-g68 cuts at GLU-7, the Sickle Cell mutation site (right).</figcaption>
+      <a class="fig-link" href="estructuras_3d/GPS_CRISPR_3d.html" target="_blank" rel="noopener">
+        <img class="shot" src="screenshots/HBB_VS_Crispr.png" alt="HBB protein 3D with CRISPR GPS" />
+        <span class="fig-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          Open interactive 3D
+        </span>
+      </a>
+      <figcaption>Genome to atom — HBB protein with 8 alpha helices (left) and the GPS-CRISPR view showing exactly where guide HBB-g68 cuts at GLU-7, the Sickle Cell mutation site (right). Rotate and zoom the live molecule in the browser.</figcaption>
+      <div class="chips" style="margin-top:16px; justify-content:center;">
+        <a class="chip chip-link" href="estructuras_3d/GPS_CRISPR_3d.html" target="_blank" rel="noopener"><b>GPS CRISPR</b> · cut site</a>
+        <a class="chip chip-link" href="estructuras_3d/HBB_3d_espectro.html" target="_blank" rel="noopener"><b>Spectrum</b> · N→C</a>
+        <a class="chip chip-link" href="estructuras_3d/HBB_3d_mutacion.html" target="_blank" rel="noopener"><b>Mutation</b> · GLU-7</a>
+        <a class="chip chip-link" href="estructuras_3d/HBB_3d_helices.html" target="_blank" rel="noopener"><b>Helices</b> · A–H</a>
+      </div>
     </figure>
   </div>
 </section>
@@ -518,7 +548,13 @@ export EXONIK_DISEASE=<span class="c-key">parkinson_gba1</span>   <span class="c
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a class="brand" href="#top" style="margin-bottom:14px;"><span class="dot"></span> EXONIK</a>
+        <a class="brand" href="#top" style="margin-bottom:14px;">
+          <svg class="logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs><linearGradient id="lg-foot" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse"><stop stop-color="#2dd4bf"/><stop offset="1" stop-color="#6d5ce6"/></linearGradient></defs>
+            <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#lg-foot)"/>
+            <g fill="var(--bg)"><rect x="19" y="16" width="8" height="32" rx="2"/><rect x="19" y="16" width="26" height="8" rx="2"/><rect x="19" y="28" width="21" height="8" rx="2"/><rect x="19" y="40" width="26" height="8" rx="2"/></g>
+          </svg>
+          EXONI<span class="k">K</span></a>
         <p style="color:var(--muted);font-size:14.5px;max-width:44ch;">Precision &amp; Personalized Gene Therapy Design Platform. Validated on Sickle Cell, redirected to Parkinson-GBA1 by configuration alone.</p>
         <p class="disclaimer"><strong>Research Use Only.</strong> Not approved for clinical use, diagnosis or treatment. Patient data derived from the public 1000 Genomes Project. Any clinical application requires independent laboratory validation and regulatory approval.</p>
       </div>
