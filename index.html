@@ -80,8 +80,6 @@ header.nav {
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .brand { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: .5px; }
 .brand .logo { width: 26px; height: 26px; display: inline-block; flex: none; }
-.brand .logo g { fill: var(--bg); }
-.brand .k { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .nav-links { display: flex; align-items: center; gap: 26px; }
 .nav-links a.link { color: var(--muted); font-size: 14px; font-weight: 500; transition: color .2s; }
 .nav-links a.link:hover { color: var(--text); }
@@ -231,9 +229,15 @@ footer a.f:hover { color: var(--teal); }
       <svg class="logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs><linearGradient id="lg-nav" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse"><stop stop-color="#2dd4bf"/><stop offset="1" stop-color="#6d5ce6"/></linearGradient></defs>
         <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#lg-nav)"/>
-        <g fill="var(--bg)"><rect x="19" y="16" width="8" height="32" rx="2"/><rect x="19" y="16" width="26" height="8" rx="2"/><rect x="19" y="28" width="21" height="8" rx="2"/><rect x="19" y="40" width="26" height="8" rx="2"/></g>
+        <g fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round">
+          <path d="M17 15 C25 21 25 26 21 31 C17 36 17 43 25 48"/>
+          <path d="M25 15 C17 21 17 26 21 31 C25 36 25 43 17 48"/>
+          <path stroke-width="2.4" d="M18.5 20 L23.5 20"/>
+          <path stroke-width="2.4" d="M18.5 43 L23.5 43"/>
+        </g>
+        <g fill="#fff"><rect x="26" y="13.5" width="20" height="6.2" rx="3.1"/><rect x="26" y="28" width="15" height="6.2" rx="3.1"/><rect x="26" y="42.3" width="20" height="6.2" rx="3.1"/></g>
       </svg>
-      EXONI<span class="k">K</span></a>
+      EXONIK</a>
     <nav class="nav-links">
       <a class="link" href="#problem">Problem</a>
       <a class="link" href="#differentiator">Differentiator</a>
@@ -552,9 +556,15 @@ export EXONIK_DISEASE=<span class="c-key">parkinson_gba1</span>   <span class="c
           <svg class="logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs><linearGradient id="lg-foot" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse"><stop stop-color="#2dd4bf"/><stop offset="1" stop-color="#6d5ce6"/></linearGradient></defs>
             <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#lg-foot)"/>
-            <g fill="var(--bg)"><rect x="19" y="16" width="8" height="32" rx="2"/><rect x="19" y="16" width="26" height="8" rx="2"/><rect x="19" y="28" width="21" height="8" rx="2"/><rect x="19" y="40" width="26" height="8" rx="2"/></g>
+            <g fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round">
+              <path d="M17 15 C25 21 25 26 21 31 C17 36 17 43 25 48"/>
+              <path d="M25 15 C17 21 17 26 21 31 C25 36 25 43 17 48"/>
+              <path stroke-width="2.4" d="M18.5 20 L23.5 20"/>
+              <path stroke-width="2.4" d="M18.5 43 L23.5 43"/>
+            </g>
+            <g fill="#fff"><rect x="26" y="13.5" width="20" height="6.2" rx="3.1"/><rect x="26" y="28" width="15" height="6.2" rx="3.1"/><rect x="26" y="42.3" width="20" height="6.2" rx="3.1"/></g>
           </svg>
-          EXONI<span class="k">K</span></a>
+          EXONIK</a>
         <p style="color:var(--muted);font-size:14.5px;max-width:44ch;">Precision &amp; Personalized Gene Therapy Design Platform. Validated on Sickle Cell, redirected to Parkinson-GBA1 by configuration alone.</p>
         <p class="disclaimer"><strong>Research Use Only.</strong> Not approved for clinical use, diagnosis or treatment. Patient data derived from the public 1000 Genomes Project. Any clinical application requires independent laboratory validation and regulatory approval.</p>
       </div>

@@ -6,10 +6,15 @@
     </linearGradient>
   </defs>
   <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#exonik-grad)"/>
-  <g fill="#070b11">
-    <rect x="19" y="16" width="8" height="32" rx="2"/>
-    <rect x="19" y="16" width="26" height="8" rx="2"/>
-    <rect x="19" y="28" width="21" height="8" rx="2"/>
-    <rect x="19" y="40" width="26" height="8" rx="2"/>
+  <g fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round">
+    <path d="M17 15 C25 21 25 26 21 31 C17 36 17 43 25 48"/>
+    <path d="M25 15 C17 21 17 26 21 31 C25 36 25 43 17 48"/>
+    <path stroke-width="2.4" d="M18.5 20 L23.5 20"/>
+    <path stroke-width="2.4" d="M18.5 43 L23.5 43"/>
+  </g>
+  <g fill="#ffffff">
+    <rect x="26" y="13.5" width="20" height="6.2" rx="3.1"/>
+    <rect x="26" y="28" width="15" height="6.2" rx="3.1"/>
+    <rect x="26" y="42.3" width="20" height="6.2" rx="3.1"/>
   </g>
 </svg>
