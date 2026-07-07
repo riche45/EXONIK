@@ -9,9 +9,10 @@
 <meta property="og:title" content="EXONIK — Precision &amp; Personalized Gene Therapy Design Platform" />
 <meta property="og:description" content="Flagship: Parkinson's disease (GBA1). Genome-wide CRISPR off-target screening + therapeutic mRNA design. Validated on Sickle Cell, redirected to Parkinson by configuration alone." />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://riche45.github.io/EXONIK_Biotech/" />
-<meta property="og:image" content="https://riche45.github.io/EXONIK_Biotech/screenshots/Parkinson_Dashboard_Resumen.png" />
+<meta property="og:url" content="https://exonik.ai/" />
+<meta property="og:image" content="https://exonik.ai/screenshots/Parkinson_Dashboard_Resumen.png" />
 <meta name="twitter:card" content="summary_large_image" />
+<link rel="canonical" href="https://exonik.ai/" />
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="apple-touch-icon" href="favicon.svg" />
 <meta name="theme-color" content="#2dd4bf" />
@@ -386,6 +387,11 @@ export EXONIK_DISEASE=<span class="c-key">parkinson_gba1</span>   <span class="c
         <p>Where drug discovery patches a misfolded protein at runtime, EXONIK operates at the most upstream point possible — the genome itself — to fix or restore the code that builds the protein.</p>
       </div>
     </div>
+
+    <div class="card" style="margin-top:22px;">
+      <h3><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4 4 4 0 0 0-2 7 4 4 0 0 0 2 7 4 4 0 0 0 8 0 4 4 0 0 0 2-7 4 4 0 0 0-2-7 4 4 0 0 0-4-4z"/><path d="M12 6v12M8.5 9.5l7 5M15.5 9.5l-7 5"/></svg></span> AI-native architecture</h3>
+      <p>EXONIK treats <strong style="color:var(--text)">DNA as a language</strong>. Today it already runs <strong style="color:var(--text)">deep learning</strong> for 3D structure (AlphaFold), and its decoupled, JSON-driven engine is built to plug in <strong style="color:var(--text)">transformer-based genomic language models</strong> — models that read nucleotide sequences to predict cut sites, binding affinity and gRNA/mRNA efficiency. Deterministic where exactness wins (BLAST, thermodynamics); learned where biology has no closed formula. <span style="color:var(--faint)">Predictive ML layer (patient variants + epigenetics): on the roadmap.</span></p>
+    </div>
   </div>
 </section>
 
@@ -511,7 +517,7 @@ export EXONIK_DISEASE=<span class="c-key">parkinson_gba1</span>   <span class="c
         <div class="tl done"><span class="st">Done</span><h4>Modular multi-disease architecture</h4><p>Disease-agnostic engine; new targets added by configuration.</p></div>
         <div class="tl next"><span class="st">Next</span><h4>Patient-level personalization for Parkinson</h4><p>Cross the GBAP1 off-targets with each patient's real SNPs — "is this guide safe for this genome?"</p></div>
         <div class="tl next"><span class="st">Next</span><h4>GBA1 3D + GPS-CRISPR</h4><p>GCasa structure (AlphaFold, UniProt P04062) with the N370S site highlighted.</p></div>
-        <div class="tl"><span class="st" style="color:var(--faint)">Future</span><h4>ML &amp; agentic layer</h4><p>Models that learn gene interactions in polygenic disease, served at scale.</p></div>
+        <div class="tl"><span class="st" style="color:var(--faint)">Future</span><h4>Genomic language models &amp; agentic layer</h4><p>Transformer-based models that read DNA as language to predict cut efficiency and off-target risk per patient, plus agents that learn gene interactions in polygenic disease — served at scale.</p></div>
       </div>
       <div>
         <div class="card">
@@ -540,6 +546,7 @@ export EXONIK_DISEASE=<span class="c-key">parkinson_gba1</span>   <span class="c
       <span class="chip"><b>plotly</b> · dashboards</span>
       <span class="chip"><b>py3Dmol</b> · 3D protein</span>
       <span class="chip"><b>BioPython</b> · PDB parsing</span>
+      <span class="chip"><b>Deep Learning</b> · AlphaFold structure</span>
       <span class="chip"><b>AlphaFold DB / RCSB PDB</b></span>
       <span class="chip"><b>1000 Genomes</b> · 2,504 people</span>
       <span class="chip"><b>GRCh38.p14</b> · reference genome</span>
