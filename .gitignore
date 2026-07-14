@@ -49,14 +49,11 @@ reportes/
 
 # ─────────────────────────────────────────────
 # 🌐 REPORTES CLÍNICOS INDIVIDUALES
-# Solo se muestra 1 ejemplo anonimizado (HG01889_ACB)
+# Publicados como demo: 5 muestras públicas y anonimizadas del 1000 Genomes.
+# NO contienen secuencias ().
 # ─────────────────────────────────────────────
-reporte_integrado/reporte_clinico_HG00640.html
-reporte_integrado/reporte_clinico_HG01140.html
-reporte_integrado/reporte_clinico_HG02594.html
-reporte_integrado/reporte_clinico_HG02923.html
 
-# Secuencias completas de guías y ARNm 
+# Secuencias completas de guías y ARNm (IP core — NO publicar)
 reporte_integrado/secuencias_laboratorio.txt
 
 # ─────────────────────────────────────────────
