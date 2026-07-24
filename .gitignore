@@ -92,10 +92,13 @@ Desktop.ini
 # 🔬 Datos estructurales — archivos grandes
 # ─────────────────────────────────────────────
 estructuras_3d/*.pdb
+estructuras_3d/**/*.pdb
+
 
 # ─────────────────────────────────────────────
 # 📓 Jupyter Notebooks (checkpoints)
 # ─────────────────────────────────────────────
 .ipynb_checkpoints/
 fase_06_alphafold_3d.ipynb
-
+fase_06_gba1_3d.ipynb
+_tmp_nb_sources.txt
